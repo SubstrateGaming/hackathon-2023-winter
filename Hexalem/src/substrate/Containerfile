@@ -1,31 +1,33 @@
+# This is an example build stage for the node template. Here we create the binary in a temporary image.
+
+# This is a base image to build substrate nodes
+FROM docker.io/paritytech/ci-linux:production as builder
+
+WORKDIR /substrate
+COPY . .
+RUN rm -rf /usr/local/rustup /usr/local/cargo && \
+    curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain none && \
+    rustup show && \
+    cargo build --release
+
+# This is the 2nd stage: a very small image where we copy the binary."
 FROM docker.io/library/ubuntu:22.04
 
-# show backtraces
-ENV RUST_BACKTRACE 1
+# Copy the node binary.
+COPY --from=builder /substrate/target/release/hexalem /usr/local/bin
 
-# install tools and dependencies
-RUN apt-get update && \
-	DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-		ca-certificates && \
-# apt cleanup
-	apt-get autoremove -y && \
-	apt-get clean && \
-	find /var/lib/apt/lists/ -type f -not -name lock -delete; \
-# add user and link ~/.local/share/polkadot to /data
-	useradd -m -u 1000 -U -s /bin/sh -d /polkadot polkadot && \
-	mkdir -p /data /polkadot/.local/share && \
-	chown -R polkadot:polkadot /data && \
-	ln -s /data /polkadot/.local/share/hexalem
+RUN useradd -m -u 1000 -U -s /bin/sh -d /node-dev node-dev && \
+  mkdir -p /chain-data /node-dev/.local/share && \
+  chown -R node-dev:node-dev /chain-data && \
+  ln -s /chain-data /node-dev/.local/share/hexalem && \
+  # unclutter and minimize the attack surface
+  rm -rf /usr/bin /usr/sbin && \
+  # check if executable works in this container
+  /usr/local/bin/hexalem --version
 
-USER polkadot
+USER node-dev
 
-# copy the compiled binary to the container
-COPY --chown=polkadot:polkadot --chmod=774 ./target/release/hexalem /usr/bin/hexalem
+EXPOSE 30333 9933 9944 9615
+VOLUME ["/chain-data"]
 
-# check if executable works in this container
-RUN /usr/bin/hexalem --version
-
-# ws_port
-EXPOSE 9930 9333 9944 30333 30334
-
-CMD ["/usr/bin/hexalem"]
+ENTRYPOINT ["/usr/local/bin/hexalem"]
