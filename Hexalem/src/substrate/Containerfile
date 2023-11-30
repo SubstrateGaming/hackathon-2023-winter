@@ -20,7 +20,7 @@ RUN apt-get update && \
 USER polkadot
 
 # copy the compiled binary to the container
-COPY --chown=polkadot:polkadot --chmod=774 /target/release/hexalem /usr/bin/hexalem
+COPY --chown=polkadot:polkadot --chmod=774 ./target/release/hexalem /usr/bin/hexalem
 
 # check if executable works in this container
 RUN /usr/bin/hexalem --version
