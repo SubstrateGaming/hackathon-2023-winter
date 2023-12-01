@@ -167,8 +167,7 @@ namespace Substrate.Hexalem
             {
                 var rawTile = Id[(offSet + selectBase) % 32];
                 // TODO: change this
-                //result.Add((byte)(((byte)TileRarity.Normal << 4) | (byte)(int)values.GetValue((byte)(rawTile & 0x0F) % values.Length)));
-                result.Add(new HexaTile((TileType)(((byte)TileRarity.Normal << 4) | (byte)(int)values.GetValue((byte)(rawTile & 0x0F) % values.Length)), TileRarity.Normal, TilePattern.Normal));
+                result.Add(new HexaTile(values[rawTile % values.Length], TileRarity.Normal, TilePattern.Normal));
             }
             return result;
         }
