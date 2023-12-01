@@ -349,7 +349,7 @@ namespace Substrate.Hexalem
                 result[t.TileType] += 1; // total
 
                 // avoid counting none tiles twice
-                if (t.TileRarity != TileRarity.None)
+                if (t.TileType != TileType.Empty)
                 {
                     result[t.TileType, t.TileRarity] += 1;
                     result[t.TileType, t.TilePattern] += 1;

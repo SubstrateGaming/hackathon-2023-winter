@@ -321,7 +321,7 @@ namespace Substrate.Hexalem.Tests
 
             var stats = hexaBoard.Stats();
 
-            Assert.That(stats[TileType.None], Is.EqualTo((int)GridSize.Medium - nbTilesNotEmpty));
+            Assert.That(stats[TileType.Empty], Is.EqualTo((int)GridSize.Medium - nbTilesNotEmpty));
 
             // Home
             Assert.That(stats[TileType.Home], Is.EqualTo(1));

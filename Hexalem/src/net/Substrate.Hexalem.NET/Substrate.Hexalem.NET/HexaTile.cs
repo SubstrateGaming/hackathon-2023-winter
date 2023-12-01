@@ -35,11 +35,11 @@ namespace Substrate.Hexalem
 
         public HexaTile(TileSharp tileTypeSharp)
         {
-            var tileType = TileType.None;
+            var tileType = TileType.Empty;
             switch (tileTypeSharp.TileType)
             {
                 case NET.NetApiExt.Generated.Model.pallet_hexalem.pallet.TileType.Empty:
-                    tileType = TileType.None;
+                    tileType = TileType.Empty;
                     break;
                 case NET.NetApiExt.Generated.Model.pallet_hexalem.pallet.TileType.Tree:
                     tileType = TileType.Forest;
@@ -94,7 +94,7 @@ namespace Substrate.Hexalem
         /// <returns></returns>
         internal bool CanUpgrade()
         {
-            if (TileRarity == TileRarity.None) // Should never happen but...
+            if (TileType == TileType.Empty) // Should never happen but...
             {
                 Log.Debug("Cannot upgrade tile which has not been set");
                 return false;

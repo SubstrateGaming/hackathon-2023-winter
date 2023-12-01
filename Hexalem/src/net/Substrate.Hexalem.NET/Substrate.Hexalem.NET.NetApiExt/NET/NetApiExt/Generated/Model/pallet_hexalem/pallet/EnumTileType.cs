@@ -20,17 +20,19 @@ namespace Substrate.Hexalem.NET.NetApiExt.Generated.Model.pallet_hexalem.pallet
         
         Empty = 0,
         
-        Tree = 1,
+        Home = 1,
         
-        Water = 2,
+        Tree = 2,
         
-        Mountain = 3,
+        Water = 3,
         
-        Desert = 4,
+        Mountain = 4,
         
-        House = 5,
+        Desert = 5,
         
-        Grass = 6,
+        House = 6,
+        
+        Grass = 7,
     }
     
     /// <summary>

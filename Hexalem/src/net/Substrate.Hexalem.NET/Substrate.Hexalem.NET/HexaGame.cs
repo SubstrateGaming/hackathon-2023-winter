@@ -242,7 +242,7 @@ namespace Substrate.Hexalem
             // Ensure coord have a valid tile
             var existingTile = (HexaTile)hexaBoard[coords.q, coords.r];
 
-            if (existingTile.TileType == TileType.None || existingTile.TileRarity == TileRarity.None)
+            if (existingTile.TileType == TileType.Empty)
             {
                 Log.Warning("Cannot upgrade tile ({q, r}) because it not a valid tile", coords.q, coords.r);
                 return false;
