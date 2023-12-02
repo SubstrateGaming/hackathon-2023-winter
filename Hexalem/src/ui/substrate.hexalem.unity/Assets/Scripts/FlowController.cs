@@ -80,12 +80,6 @@ namespace Assets.Scripts
             // initialize the client in the network manager
             Network.InitializeClient();
 
-            // load the initial wallet
-            if (!Network.LoadWallet())
-            {
-                Debug.Log("Failed to load initial wallet");
-            }
-
             // call insital flow state
             ChangeScreenState(ScreenState.StartScreen);
         }

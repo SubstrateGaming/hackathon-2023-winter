@@ -75,3 +75,19 @@
     border-bottom-left-radius: 20px;
     background-color: rgb(187, 185, 231);
 }
+
+.button-select {
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    border-bottom-left-radius: 20px;
+    background-color: rgb(188, 188, 188);
+}

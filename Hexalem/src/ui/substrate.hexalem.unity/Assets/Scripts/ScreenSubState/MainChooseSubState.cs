@@ -8,6 +8,8 @@ namespace Assets.Scripts.ScreenStates
 {
     internal class MainChooseSubState : ScreenBaseState
     {
+        private Button _btnPlay;
+
         public MainScreenState MainScreenState => ParentState as MainScreenState;
 
         public MainChooseSubState(FlowController flowController, ScreenBaseState parent)
@@ -28,29 +30,37 @@ namespace Assets.Scripts.ScreenStates
             TemplateContainer elementInstance = ElementInstance("UI/Frames/ChooseFrame");
 
             var btnTrain = elementInstance.Q<Button>("BtnTrain");
-            btnTrain.SetEnabled(false);
             btnTrain.RegisterCallback<ClickEvent>(OnBtnTrainClicked);
 
-
-            var btnPlay = elementInstance.Q<Button>("BtnPlay");
-            btnPlay.SetEnabled(false);
-            btnPlay.RegisterCallback<ClickEvent>(OnBtnPlayClicked);
+            _btnPlay = elementInstance.Q<Button>("BtnPlay");
+            _btnPlay.RegisterCallback<ClickEvent>(OnBtnPlayClicked);
 
             var btnScore = elementInstance.Q<Button>("BtnScore");
-            btnScore.SetEnabled(false);
             btnScore.RegisterCallback<ClickEvent>(OnBtnScoreClicked);
 
             var btnExit= elementInstance.Q<Button>("BtnExit");
-            btnExit.SetEnabled(false);
             btnExit.RegisterCallback<ClickEvent>(OnBtnExitClicked);
 
             // add element
             scrollView.Add(elementInstance);
+
+            // subscribe to connection changes
+            Network.ConnectionStateChanged += OnConnectionStateChanged;
+
+            OnConnectionStateChanged(Network.Client.IsConnected);
         }
 
         public override void ExitState()
         {
             Debug.Log($"[{this.GetType().Name}][SUB] ExitState");
+
+            // unsubscribe from event
+            Network.ConnectionStateChanged -= OnConnectionStateChanged;
+        }
+
+        private void OnConnectionStateChanged(bool IsConnected)
+        {
+            _btnPlay.SetEnabled(IsConnected);
         }
 
         private void OnBtnTrainClicked(ClickEvent evt)
