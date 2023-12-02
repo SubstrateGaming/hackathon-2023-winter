@@ -1,4 +1,6 @@
 using Assets.Scripts;
+using Substrate.Hexalem.NET.NetApiExt.Generated.Model.frame_system;
+using Substrate.Integration.Model;
 using System.Threading;
 using UnityEngine;
 
@@ -11,6 +13,8 @@ public class StorageManager : Singleton<StorageManager>
     public NetworkManager Network => NetworkManager.GetInstance();
 
     public uint BlockNumber { get; private set; }
+
+    public AccountInfoSharp AccountInfo { get; private set; }
 
     /// <summary>
     /// Awake is called when the script instance is being loaded
@@ -26,8 +30,7 @@ public class StorageManager : Singleton<StorageManager>
     /// </summary>
     private void Start()
     {
-        //InvokeRepeating(nameof(UpdatedBaseData), 4.0f, 10.0f);
-        //InvokeRepeating(nameof(UpdatedMarket), 5.0f, 60.0f);
+        InvokeRepeating(nameof(UpdatedBaseData), 4.0f, 10.0f);
     }
 
     /// <summary>
@@ -35,33 +38,28 @@ public class StorageManager : Singleton<StorageManager>
     /// </summary>
     private void Update()
     {
-    }
-
-    internal void StartPolling()
-    {
-        InvokeRepeating(nameof(UpdatedBaseData), 0.0f, 2.0f);
-        InvokeRepeating(nameof(UpdatedMarket), 5.0f, 20.0f);
+        /// Your code goes here
     }
 
     public bool CanPollStorage()
     {
-        //if (Network.Client == null)
-        //{
-        //    Debug.LogError($"[StorageManager] Client is null");
-        //    return false;
-        //}
+        if (Network.Client == null)
+        {
+            Debug.LogError($"[StorageManager] Client is null");
+            return false;
+        }
 
-        //if (!Network.Client.IsConnected)
-        //{
-        //    Debug.Log($"[StorageManager] Client is not connected");
-        //    return false;
-        //}
+        if (!Network.Client.IsConnected)
+        {
+            Debug.Log($"[StorageManager] Client is not connected");
+            return false;
+        }
 
-        //if (Network.Client.Account == null)
-        //{
-        //    Debug.Log($"[StorageManager] Client account not set");
-        //    return false;
-        //}
+        if (Network.Client.Account == null)
+        {
+            Debug.Log($"[StorageManager] Client account not set");
+            return false;
+        }
 
         return true;
     }
@@ -73,25 +71,19 @@ public class StorageManager : Singleton<StorageManager>
             return;
         }
 
-        //var blockNumber = await Network.Client.GetBlocknumberAsync(CancellationToken.None);
+        var blockNumber = await Network.Client.GetBlocknumberAsync(CancellationToken.None);
 
-        //if (blockNumber == null || BlockNumber >= blockNumber)
-        //{
-        //    return;
-        //}
-
-        //BlockNumber = blockNumber.Value;
-        //OnNextBlocknumber?.Invoke(blockNumber.Value);
-
-        //Debug.Log($"[StorageManager] Block {BlockNumber}");
-    }
-
-    private async void UpdatedMarket()
-    {
-        if (!CanPollStorage())
+        if (blockNumber == null || BlockNumber >= blockNumber)
         {
             return;
         }
 
+        BlockNumber = blockNumber.Value;
+        OnNextBlocknumber?.Invoke(blockNumber.Value);
+
+        Debug.Log($"[StorageManager] Block {BlockNumber}");
+
+        AccountInfo = await Network.Client.GetAccountAsync(CancellationToken.None);
     }
+
 }

@@ -1,5 +1,6 @@
 using Schnorrkel.Keys;
 using Substrate.NET.Wallet;
+using Substrate.Integration;
 using Substrate.NetApi;
 using Substrate.NetApi.Model.Rpc;
 using Substrate.NetApi.Model.Types;
@@ -8,6 +9,7 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using UnityEngine;
+using Substrate.Integration.Helper;
 
 namespace Assets.Scripts
 {
@@ -26,14 +28,12 @@ namespace Assets.Scripts
         public MiniSecret MiniSecretAlice => new MiniSecret(Utils.HexToByteArray("0xe5be9a5092b81bca64be81d212e7f2f9eba183bb7a90954f7b76361f6edb5c0a"), ExpandMode.Ed25519);
         public Account Alice => Account.Build(KeyType.Sr25519, MiniSecretAlice.ExpandToSecret().ToBytes(), MiniSecretAlice.GetPair().Public.Key);
 
-        private readonly string _nodeUrl = "wss://...";
+        private readonly string _nodeUrl = "ws://127.0.0.1:9944";
         
-        //private readonly string _nodeUrl = "wss://rpc-rococo.bajun.network";
-        //private readonly NetworkType _networkType = NetworkType.Live;
-        //private readonly string _nodeUrl = "wss://rpc-parachain.bajun.network";
+        private readonly NetworkType _networkType = NetworkType.Live;
 
-        //private SubstrateNetwork _client;
-        //public SubstrateNetwork Client => _client;
+        private SubstrateNetwork _client;
+        public SubstrateNetwork Client => _client;
 
         public Wallet Wallet { get; private set; }
 
@@ -48,7 +48,6 @@ namespace Assets.Scripts
         public void Start()
         {
             InvokeRepeating(nameof(UpdateNetworkState), 0.0f, 2.0f);
-
             InvokeRepeating(nameof(UpdatedExtrinsic), 0.0f, 3.0f);
         }
 
@@ -60,17 +59,17 @@ namespace Assets.Scripts
 
         private void UpdateNetworkState()
         {
-            //if (_client == null)
-            //{
-            //    return;
-            //}
+            if (_client == null)
+            {
+                return;
+            }
 
-            //var connectionState = _client.IsConnected;
-            //if (_lastConnectionState == null || _lastConnectionState != connectionState)
-            //{
-            //    ConnectionStateChanged?.Invoke(connectionState);
-            //    _lastConnectionState = connectionState;
-            //}
+            var connectionState = _client.IsConnected;
+            if (_lastConnectionState == null || _lastConnectionState != connectionState)
+            {
+                ConnectionStateChanged?.Invoke(connectionState);
+                _lastConnectionState = connectionState;
+            }
         }
 
         private void UpdatedExtrinsic()
@@ -167,12 +166,12 @@ namespace Assets.Scripts
         // Start is called before the first frame update
         public void InitializeClient()
         {
-            //if (_client != null)
-            //{
-            //    return;
-            //}
+            if (_client != null)
+            {
+                return;
+            }
 
-            //_client = new SubstrateNetwork(null, _networkType, _nodeUrl);
+            _client = new SubstrateNetwork(null, _networkType, _nodeUrl);
         }
     }
 }

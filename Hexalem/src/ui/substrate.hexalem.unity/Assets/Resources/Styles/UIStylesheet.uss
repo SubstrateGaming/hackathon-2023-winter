@@ -41,7 +41,7 @@
 .font-regular {
     -unity-font-definition: url('project://database/Assets/Fonts/Aeonik-Regular%20SDF.asset?fileID=11400000&guid=2f1d71530f6fe2946842a77c2e74fb8c&type=2#Aeonik-Regular SDF');
     flex-shrink: 0;
-    -unity-font: url('project://database/Assets/UI%20Toolkit/UnityThemes/UnityDefaultRuntimeTheme.tss?fileID=2230732570650464555&guid=849f2d35a0c094a47a10ee1eec7bcd48&type=3#NotInter-Regular');
+    -unity-font: url('project://database/Assets/UnityDefaultRuntimeTheme.tss?fileID=2230732570650464555&guid=a030da70dd538874b9641d9acae2aa5d&type=3#NotInter-Regular');
 }
 
 .font-color {
@@ -50,4 +50,28 @@
 
 .main-bg {
     background-color: rgba(135, 112, 173, 0.24);
+}
+
+.button-basic {
+    border-top-width: 10px;
+    border-right-width: 10px;
+    border-bottom-width: 10px;
+    border-left-width: 10px;
+    border-left-color: rgb(178, 218, 253);
+    border-right-color: rgb(178, 218, 253);
+    border-top-color: rgb(178, 218, 253);
+    border-bottom-color: rgb(178, 218, 253);
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    border-bottom-left-radius: 20px;
+    background-color: rgb(187, 185, 231);
 }

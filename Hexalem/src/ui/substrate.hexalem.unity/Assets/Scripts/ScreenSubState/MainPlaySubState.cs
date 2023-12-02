@@ -1,18 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using Assets.Scripts.ScreenStates;
 using UnityEngine;
 using UnityEngine.UIElements;
-using System.Linq;
 
-namespace Assets.Scripts.ScreenStates
+namespace Assets.Scripts
 {
-    internal class MainDashboardSubState : ScreenBaseState
+    internal class MainPlaySubState : ScreenBaseState
     {
-
-        public VisualElement _velAvatarSmallElement;
-
         public MainScreenState MainScreenState => ParentState as MainScreenState;
 
-        public MainDashboardSubState(FlowController flowController, ScreenBaseState parent)
+        public MainPlaySubState(FlowController flowController, ScreenBaseState parent)
             : base(flowController, parent) { }
 
         public override void EnterState()
@@ -20,30 +16,23 @@ namespace Assets.Scripts.ScreenStates
             Debug.Log($"[{this.GetType().Name}][SUB] EnterState");
 
             var floatBody = FlowController.VelContainer.Q<VisualElement>("FloatBody");
-            floatBody.style.backgroundColor = GameConstant.ColorLightGrey;
             floatBody.Clear();
 
             TemplateContainer scrollViewElement = ElementInstance("UI/Elements/ScrollViewElement");
             floatBody.Add(scrollViewElement);
+
             var scrollView = scrollViewElement.Q<ScrollView>("ScvElement");
 
-            TemplateContainer elementInstance = ElementInstance("UI/Frames/DashboardFrame");
-
-            var messageBox = elementInstance.Q<Label>("LblMessageBox");
-            messageBox.style.display = DisplayStyle.None;
-
+            TemplateContainer elementInstance = ElementInstance("UI/Frames/PlayFrame");
 
             // add element
             scrollView.Add(elementInstance);
-
         }
 
         public override void ExitState()
         {
             Debug.Log($"[{this.GetType().Name}][SUB] ExitState");
-
         }
-
 
     }
 }

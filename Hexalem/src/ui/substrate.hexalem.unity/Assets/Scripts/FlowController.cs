@@ -9,12 +9,13 @@ namespace Assets.Scripts
     public enum ScreenState
     {
         StartScreen,
-        MainScreen
+        MainScreen,
     }
 
     public enum ScreenSubState
     {
-        Dashboard
+        Choose,
+        Play
     }
 
     public class FlowController : MonoBehaviour
@@ -49,15 +50,16 @@ namespace Assets.Scripts
             CacheData = new CacheData();
 
             // Initialize states
-            _stateDictionary.Add(ScreenState.StartScreen, new LoginScreen(this));
+            _stateDictionary.Add(ScreenState.StartScreen, new StartScreen(this));
+
             var mainScreen = new MainScreenState(this);
             _stateDictionary.Add(ScreenState.MainScreen, mainScreen);
 
             var mainScreenSubStates = new Dictionary<ScreenSubState, ScreenBaseState>
             {
-                { ScreenSubState.Dashboard, new MainDashboardSubState(this, mainScreen) },
+                { ScreenSubState.Choose, new MainChooseSubState(this, mainScreen) },
+                { ScreenSubState.Play, new MainPlaySubState(this, mainScreen) },
             };
-
             _subStateDictionary.Add(ScreenState.MainScreen, mainScreenSubStates);
         }
 
@@ -110,12 +112,12 @@ namespace Assets.Scripts
             // change the state
             _currentState = _stateDictionary[newScreenState];
 
-            // enter current state
-            _currentState.EnterState();
-
             // exit any active sub-state when changing the main state
             _currentSubState?.ExitState();
             _currentSubState = null;
+
+            // enter current state
+            _currentState.EnterState();
         }
 
         /// <summary>
