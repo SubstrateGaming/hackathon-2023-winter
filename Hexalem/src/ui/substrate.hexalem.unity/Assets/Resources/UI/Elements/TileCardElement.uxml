@@ -1,0 +1,28 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
+    <ui:VisualElement name="TileCardBox" style="flex-grow: 0; flex-shrink: 0; width: 300px; height: 350px; align-items: center; justify-content: center;">
+        <ui:VisualElement style="flex-grow: 0; width: 270px; height: 350px; flex-shrink: 0; min-height: auto; min-width: auto; border-top-width: 0; border-right-width: 0; border-bottom-width: 0; border-left-width: 0; border-left-color: rgba(255, 255, 255, 0); border-right-color: rgba(255, 255, 255, 0); border-top-color: rgba(255, 255, 255, 0); border-bottom-color: rgba(255, 255, 255, 0); border-top-left-radius: 25px; border-top-right-radius: 25px; border-bottom-right-radius: 25px; border-bottom-left-radius: 25px; -unity-background-image-tint-color: rgba(255, 255, 255, 0); background-color: rgba(225, 225, 225, 0.78);">
+            <ui:VisualElement style="flex-grow: 0; flex-shrink: 0; width: 270px; height: 250px; align-items: auto; justify-content: center;">
+                <ui:VisualElement style="flex-grow: 0; width: 270px; height: 250px; background-color: rgba(200, 200, 200, 0.39); border-top-left-radius: 25px; border-top-right-radius: 25px; border-bottom-right-radius: 0; border-bottom-left-radius: 0; flex-shrink: 0; align-items: center; justify-content: center;">
+                    <ui:VisualElement style="flex-grow: 1; width: 100%; height: 20%;" />
+                    <ui:VisualElement style="flex-grow: 0; background-image: url(&apos;project://database/Assets/Images/tile_cave.png?fileID=2800000&amp;guid=3e0f3eb90e0a7d94fb32314e2bf1c7d0&amp;type=3#tile_cave&apos;); width: 60%; height: 60%; -unity-background-image-tint-color: rgb(200, 200, 200); -unity-background-scale-mode: scale-to-fit; flex-shrink: 0; align-items: center; justify-content: center;" />
+                    <ui:VisualElement style="flex-grow: 0; width: 100%; height: 20%; flex-direction: row; flex-shrink: 0; padding-right: 10px; padding-left: 10px;">
+                        <ui:Label tabindex="-1" text="Every round +1" parse-escape-sequences="true" display-tooltip-when-elided="true" class="font-comic" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; width: auto; height: 100%; font-size: 25px; -unity-text-align: middle-left;" />
+                        <ui:VisualElement style="flex-grow: 0; width: 15%; height: 100%; min-width: auto; min-height: auto; flex-shrink: 0; padding-right: 5px; padding-left: 5px;">
+                            <ui:VisualElement style="flex-grow: 0; width: 100%; height: 100%; flex-shrink: 0; background-image: url(&apos;project://database/Assets/Images/icon_stone_new.png?fileID=2800000&amp;guid=ce4e1ed5cc1b55b4b92b5ce0040b19e8&amp;type=3#icon_stone_new&apos;); -unity-background-scale-mode: scale-to-fit;" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement style="flex-grow: 0; flex-shrink: 0; width: 270px; height: 100px; justify-content: center; align-items: center;">
+                <ui:VisualElement style="flex-grow: 0; width: 80px; height: 50px; flex-shrink: 0; flex-direction: row;">
+                    <ui:VisualElement style="flex-grow: 0; flex-shrink: 0; width: 50%; height: 100%; padding-top: 10px; padding-bottom: 10px;">
+                        <ui:VisualElement style="flex-grow: 0; flex-shrink: 0; width: 100%; height: 100%; background-image: url(&apos;project://database/Assets/Images/icon_mana_blue.png?fileID=2800000&amp;guid=e5f4e90c15104c74f915fbbef99af2aa&amp;type=3#icon_mana_blue&apos;); -unity-background-scale-mode: scale-to-fit;" />
+                    </ui:VisualElement>
+                    <ui:VisualElement style="flex-grow: 0; width: 50%; height: 100%; flex-shrink: 0; padding-top: 10px; padding-bottom: 10px; align-items: auto; padding-left: 0;">
+                        <ui:Label tabindex="-1" text="1" parse-escape-sequences="true" display-tooltip-when-elided="true" class="font-comic" style="padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; width: 100%; height: 100%; -unity-text-align: middle-left; font-size: 35px;" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
