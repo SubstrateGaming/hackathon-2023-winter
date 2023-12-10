@@ -41,27 +41,39 @@
 .font-regular {
     -unity-font-definition: url('project://database/Assets/Fonts/Aeonik-Regular%20SDF.asset?fileID=11400000&guid=2f1d71530f6fe2946842a77c2e74fb8c&type=2#Aeonik-Regular SDF');
     flex-shrink: 0;
-    -unity-font: url('project://database/Assets/UnityDefaultRuntimeTheme.tss?fileID=2230732570650464555&guid=a030da70dd538874b9641d9acae2aa5d&type=3#NotInter-Regular');
+    -unity-font: url('project://database/Assets/UnityDefaultRuntimeTheme.tss?fileID=2230732570650464555&guid=732b7661055d7a24991f33ddb6cdbab2&type=3#NotInter-Regular');
     -unity-font-style: bold;
 }
 
+.font-comic {
+    -unity-font-definition: url('project://database/Assets/Fonts/Hey%20Comic%20SDF.asset?fileID=11400000&guid=140ac92711f6f5a49a1e49c11df70dfa&type=2#Hey Comic SDF');
+    flex-shrink: 0;
+    -unity-font: url('project://database/Assets/Fonts/Hey%20Comic.ttf?fileID=12800000&guid=76b251ed5027e7347b294a930d467c67&type=3#Hey Comic');
+}
+
+.font-chicken {
+    -unity-font-definition: url('project://database/Assets/Fonts/Happy%20Chicken%20SDF.asset?fileID=11400000&guid=bdfb382889bf9a04a869a5c7d8d0eb28&type=2#Happy Chicken SDF');
+    flex-shrink: 0;
+    -unity-font: url('project://database/Assets/Fonts/Happy%20Chicken.ttf?fileID=12800000&guid=22f474d54f5886446be641bb7450ba36&type=3#Happy Chicken');
+}
+
 .font-color {
-    color: rgb(0, 0, 0);
+    color: rgb(51, 51, 51);
 }
 
 .main-bg {
-    background-color: rgba(135, 112, 173, 0.24);
+    background-color: rgba(255, 255, 255, 0);
 }
 
 .button-basic {
-    border-top-width: 10px;
-    border-right-width: 10px;
-    border-bottom-width: 10px;
-    border-left-width: 10px;
-    border-left-color: rgb(178, 218, 253);
-    border-right-color: rgb(178, 218, 253);
-    border-top-color: rgb(178, 218, 253);
-    border-bottom-color: rgb(178, 218, 253);
+    border-top-width: 12px;
+    border-right-width: 12px;
+    border-bottom-width: 12px;
+    border-left-width: 12px;
+    border-left-color: rgb(51, 51, 51);
+    border-right-color: rgb(51, 51, 51);
+    border-top-color: rgb(51, 51, 51);
+    border-bottom-color: rgb(51, 51, 51);
     margin-top: 0;
     margin-right: 0;
     margin-bottom: 0;
@@ -70,11 +82,11 @@
     padding-right: 0;
     padding-bottom: 0;
     padding-left: 0;
-    border-top-left-radius: 20px;
-    border-top-right-radius: 20px;
-    border-bottom-right-radius: 20px;
-    border-bottom-left-radius: 20px;
-    background-color: rgb(187, 185, 231);
+    border-top-left-radius: 25px;
+    border-top-right-radius: 25px;
+    border-bottom-right-radius: 25px;
+    border-bottom-left-radius: 25px;
+    background-color: rgb(255, 255, 255);
 }
 
 .button-select {
@@ -91,4 +103,13 @@
     border-bottom-right-radius: 20px;
     border-bottom-left-radius: 20px;
     background-color: rgb(188, 188, 188);
+    flex-shrink: 0;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+}
+
+.stats-bg {
+    background-color: rgb(237, 237, 237);
 }

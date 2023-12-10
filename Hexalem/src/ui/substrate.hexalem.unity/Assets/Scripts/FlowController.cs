@@ -10,12 +10,14 @@ namespace Assets.Scripts
     {
         StartScreen,
         MainScreen,
+        PlayScreen,
     }
 
     public enum ScreenSubState
     {
-        Choose,
-        Play
+        MainChoose,
+        Play,
+        PlayView
     }
 
     public class FlowController : MonoBehaviour
@@ -57,10 +59,20 @@ namespace Assets.Scripts
 
             var mainScreenSubStates = new Dictionary<ScreenSubState, ScreenBaseState>
             {
-                { ScreenSubState.Choose, new MainChooseSubState(this, mainScreen) },
+                { ScreenSubState.MainChoose, new MainChooseSubState(this, mainScreen) },
                 { ScreenSubState.Play, new MainPlaySubState(this, mainScreen) },
             };
             _subStateDictionary.Add(ScreenState.MainScreen, mainScreenSubStates);
+
+            var playScreen = new PlayScreenState(this);
+            _stateDictionary.Add(ScreenState.PlayScreen, playScreen);
+
+            var playScreenSubStates = new Dictionary<ScreenSubState, ScreenBaseState>
+            {
+                { ScreenSubState.PlayView, new PlayViewSubState(this, playScreen) },
+
+            };
+            _subStateDictionary.Add(ScreenState.PlayScreen, playScreenSubStates);
         }
 
         /// <summary>
