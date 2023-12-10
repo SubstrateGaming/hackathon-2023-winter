@@ -60,7 +60,7 @@ namespace Assets.Scripts.ScreenStates
 
         private void OnConnectionStateChanged(bool IsConnected)
         {
-            _btnPlay.SetEnabled(IsConnected);
+            //_btnPlay.SetEnabled(IsConnected);
         }
 
         private void OnBtnTrainClicked(ClickEvent evt)
