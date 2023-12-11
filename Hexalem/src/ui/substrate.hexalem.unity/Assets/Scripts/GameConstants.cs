@@ -44,6 +44,8 @@ namespace Assets.Scripts
         public static StyleColor FontGrey => new StyleColor(new Color32(127, 127, 127, 255));
         public static StyleColor FontDark => new StyleColor(new Color32(0, 0, 0, 255));
 
+        public static StyleColor ColorTileCardSelect => new StyleColor(new Color32(200, 225, 200, 255));
+        public static StyleColor ColorTileCardUnSelect => new StyleColor(new Color32(225, 225, 225, 255));
 
         public static string BalanceFormatter(BigInteger bigInteger)
         {
