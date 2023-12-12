@@ -22,21 +22,21 @@ namespace Substrate.Hexalem.NET.NetApiExt.Generated.Model.pallet_hexalem.pallet
         
         Home = 1,
         
-        Tree = 2,
+        Grass = 2,
         
         Water = 3,
         
         Mountain = 4,
         
-        Desert = 5,
+        Tree = 5,
         
-        House = 6,
+        Desert = 6,
         
-        Grass = 7,
+        Cave = 7,
     }
     
     /// <summary>
-    /// >> 131 - Variant[pallet_hexalem.pallet.TileType]
+    /// >> 47 - Variant[pallet_hexalem.pallet.TileType]
     /// </summary>
     public sealed class EnumTileType : BaseEnum<TileType>
     {
