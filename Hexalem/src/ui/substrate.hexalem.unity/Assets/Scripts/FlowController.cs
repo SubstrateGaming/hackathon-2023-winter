@@ -19,7 +19,8 @@ namespace Assets.Scripts
         Play,
         PlaySelect,
         PlayTileSelect,
-        PlayTileUpgrade
+        PlayTileUpgrade,
+        PlayNextTurn
     }
 
     public class FlowController : MonoBehaviour
@@ -74,6 +75,7 @@ namespace Assets.Scripts
                 { ScreenSubState.PlaySelect, new PlaySelectSubState(this, playScreen) },
                 { ScreenSubState.PlayTileSelect, new PlayTileSelectSubState(this, playScreen) },
                 { ScreenSubState.PlayTileUpgrade, new PlayTileUpgradeSubState(this, playScreen) },
+                { ScreenSubState.PlayNextTurn, new PlayNextTurnSubState(this, playScreen) },
 
             };
             _subStateDictionary.Add(ScreenState.PlayScreen, playScreenSubStates);
