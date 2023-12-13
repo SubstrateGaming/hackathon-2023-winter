@@ -20,7 +20,8 @@ namespace Assets.Scripts
         PlaySelect,
         PlayTileSelect,
         PlayTileUpgrade,
-        PlayNextTurn
+        PlayNextTurn,
+        PlayFinish
     }
 
     public class FlowController : MonoBehaviour
@@ -30,7 +31,7 @@ namespace Assets.Scripts
 
         internal readonly RandomNumberGenerator Random = RandomNumberGenerator.Create();
 
-        public  Vector2 ScrollOffset { get; set; }
+        public Vector2 ScrollOffset { get; set; }
 
         public CacheData CacheData { get; private set; }
 
@@ -76,7 +77,7 @@ namespace Assets.Scripts
                 { ScreenSubState.PlayTileSelect, new PlayTileSelectSubState(this, playScreen) },
                 { ScreenSubState.PlayTileUpgrade, new PlayTileUpgradeSubState(this, playScreen) },
                 { ScreenSubState.PlayNextTurn, new PlayNextTurnSubState(this, playScreen) },
-
+                { ScreenSubState.PlayFinish, new PlayFinishSubState(this, playScreen) },
             };
             _subStateDictionary.Add(ScreenState.PlayScreen, playScreenSubStates);
         }

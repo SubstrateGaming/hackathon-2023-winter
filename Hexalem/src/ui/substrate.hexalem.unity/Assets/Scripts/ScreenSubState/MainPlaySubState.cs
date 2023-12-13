@@ -33,6 +33,5 @@ namespace Assets.Scripts
         {
             Debug.Log($"[{this.GetType().Name}][SUB] ExitState");
         }
-
     }
 }
