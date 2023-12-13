@@ -14,24 +14,18 @@ namespace Assets.Scripts
         public static StyleColor ColorUncommon => new StyleColor(new Color32(186, 236, 215, 255));
         public static StyleColor ColorCommon => new StyleColor(new Color32(125, 125, 125, 255));
 
-        public static StyleColor ColorNone => new StyleColor(new Color32(202, 202, 202, 255));
-
-        public static StyleColor ColorLightGrey => new StyleColor(new Color32(236, 235, 233, 255));
-        public static StyleColor ColorDarkGrey => new StyleColor(new Color32(105, 105, 105, 255));
-
-        public static StyleColor ColorGrey => new StyleColor(new Color32(202, 202, 202, 255));
         public static StyleColor ColorDark => new StyleColor(new Color32(0, 0, 0, 255));
         public static StyleColor ColorLight => new StyleColor(new Color32(255, 255, 255, 255));
 
-        public static StyleColor ColorOrange => new StyleColor(new Color32(248, 156, 121, 255));
-        public static StyleColor ColorGreen => new StyleColor(new Color32(0, 255, 0, 255));
-        public static StyleColor ColorRed => new StyleColor(new Color32(255, 0, 0, 255));
+        public static StyleColor PastelBlue => new StyleColor(new Color32(164, 182, 221, 255));
+        public static StyleColor PastelOrange => new StyleColor(new Color32(208, 146, 146, 255));
+        public static StyleColor PastelPink => new StyleColor(new Color32(192, 148, 204, 255));
+        public static StyleColor PastelRed => new StyleColor(new Color32(195, 120, 146, 255));
+        public static StyleColor PastelGreen => new StyleColor(new Color32(162, 208, 192, 255));
+
 
         public static StyleColor ColorUnselected => new StyleColor(new Color32(200, 175, 150, 255));
-
         public static StyleColor ColorSelected => new StyleColor(new Color32(150, 200, 150, 255));
-
-        public static StyleColor ColorTransparent => new StyleColor(new Color32(0, 0, 0, 0));
 
         public static StyleColor ColorExtrinsic => new StyleColor(new Color32(95, 88, 88, 255));
         public static StyleColor ColorExtrinsicRunning => new StyleColor(new Color32(188, 187, 187, 255));
@@ -40,12 +34,7 @@ namespace Assets.Scripts
         public static StyleColor ColorExtrinsicFailed => new StyleColor(new Color32(219, 100, 100, 255));
         public static StyleColor ColorExtrinsicFailedDark => new StyleColor(new Color32(120, 45, 45, 255));
 
-        public static StyleColor FontLight => new StyleColor(new Color32(255, 255, 255, 255));
-        public static StyleColor FontGrey => new StyleColor(new Color32(127, 127, 127, 255));
-        public static StyleColor FontDark => new StyleColor(new Color32(0, 0, 0, 255));
-
-        public static StyleColor ColorTileCardSelect => new StyleColor(new Color32(200, 225, 200, 255));
-        public static StyleColor ColorTileCardUnSelect => new StyleColor(new Color32(225, 225, 225, 255));
+        public static StyleColor FontDark => new StyleColor(new Color32(51, 51, 51, 255));
 
         public static string BalanceFormatter(BigInteger bigInteger)
         {
