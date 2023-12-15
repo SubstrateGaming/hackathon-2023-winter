@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using Substrate.NetApi.Model.Rpc;
+using System.Numerics;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -17,10 +18,13 @@ namespace Assets.Scripts
         public static StyleColor ColorLight => new StyleColor(new Color32(255, 255, 255, 255));
 
         public static StyleColor PastelBlue => new StyleColor(new Color32(164, 182, 221, 255));
+        public static StyleColor PastelYellow => new StyleColor(new Color32(255, 247, 165, 255));
         public static StyleColor PastelOrange => new StyleColor(new Color32(208, 146, 146, 255));
         public static StyleColor PastelPink => new StyleColor(new Color32(192, 148, 204, 255));
         public static StyleColor PastelRed => new StyleColor(new Color32(195, 120, 146, 255));
         public static StyleColor PastelGreen => new StyleColor(new Color32(162, 208, 192, 255));
+
+        public static StyleColor PastelGray => new StyleColor(new Color32(207, 207, 207, 255));
 
         public static StyleColor ColorUnselected => new StyleColor(new Color32(200, 175, 150, 255));
         public static StyleColor ColorSelected => new StyleColor(new Color32(150, 200, 150, 255));
@@ -81,34 +85,34 @@ namespace Assets.Scripts
         //    }
         //}
 
-        //internal static StyleColor GetColor(TransactionEvent transactionEvent)
-        //{
-        //    switch (transactionEvent)
-        //    {
-        //        case TransactionEvent.Validated:
-        //            return ColorExtrinsicRunning;
+        internal static StyleColor GetColor(TransactionEvent transactionEvent)
+        {
+            switch (transactionEvent)
+            {
+                case TransactionEvent.Validated:
+                    return PastelYellow;
 
-        //        case TransactionEvent.Broadcasted:
-        //            return ColorExtrinsicRunning;
+                case TransactionEvent.Broadcasted:
+                    return PastelYellow;
 
-        //        case TransactionEvent.BestChainBlockIncluded:
-        //            return ColorExtrinsicSuccess;
+                case TransactionEvent.BestChainBlockIncluded:
+                    return PastelYellow;
 
-        //        case TransactionEvent.Finalized:
-        //            return ColorExtrinsicSuccess;
+                case TransactionEvent.Finalized:
+                    return PastelGreen;
 
-        //        case TransactionEvent.Error:
-        //            return ColorExtrinsicFailed;
+                case TransactionEvent.Error:
+                    return PastelRed;
 
-        //        case TransactionEvent.Invalid:
-        //            return ColorExtrinsicFailed;
+                case TransactionEvent.Invalid:
+                    return PastelRed;
 
-        //        case TransactionEvent.Dropped:
-        //            return ColorExtrinsicFailed;
+                case TransactionEvent.Dropped:
+                    return PastelOrange;
 
-        //        default:
-        //            return new StyleColor(new Color32(95, 88, 88, 0));
-        //    }
-        //}
+                default:
+                    return new StyleColor(new Color32(95, 88, 88, 0));
+            }
+        }
     }
 }
