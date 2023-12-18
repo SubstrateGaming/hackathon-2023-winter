@@ -65,7 +65,7 @@ pub type AccountId = <<Signature as Verify>::Signer as IdentifyAccount>::Account
 /// Balance of an account.
 pub type Balance = u128;
 
-#[derive(Encode, Decode, Debug, TypeInfo, Copy, Clone, MaxEncodedLen, Eq, PartialEq)]
+#[derive(Debug, Default, Copy, Clone, Eq, PartialEq, Encode, Decode, TypeInfo, MaxEncodedLen)]
 pub struct HexalemTile(u8);
 
 impl GetTileInfo for HexalemTile {
@@ -98,12 +98,6 @@ impl HexalemTile {
 	pub fn new(tile_type: TileType, level: u8, pattern: TilePattern) -> Self {
 		let encoded = ((tile_type as u8) << 3) | ((level & 0x3) << 6) | (pattern as u8 & 0x7);
 		Self(encoded)
-	}
-}
-
-impl Default for HexalemTile {
-	fn default() -> Self {
-		Self(0) // Empty tile
 	}
 }
 

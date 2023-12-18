@@ -5,12 +5,12 @@ use sp_std::vec;
 // Custom trait for Tile definition
 pub trait GetTileInfo {
 	fn get_level(&self) -> u8;
-	fn set_level(&mut self, level: u8) -> ();
+	fn set_level(&mut self, level: u8);
 
 	fn get_type(&self) -> TileType;
 
 	fn get_pattern(&self) -> TilePattern;
-	fn set_pattern(&mut self, value: TilePattern) -> ();
+	fn set_pattern(&mut self, value: TilePattern);
 
 	fn same(&self, other: &Self) -> bool {
 		self.get_type() == other.get_type()
@@ -23,23 +23,23 @@ pub trait GameProperties<Account, MaxPlayers> {
 	// Player made a move
 	// It is used for determining whether to generate a new selection
 	fn get_played(&self) -> bool;
-	fn set_played(&mut self, played: bool) -> ();
+	fn set_played(&mut self, played: bool);
 
 	fn get_round(&self) -> u8;
-	fn set_round(&mut self, round: u8) -> ();
+	fn set_round(&mut self, round: u8);
 
 	fn get_player_turn(&self) -> u8;
-	fn set_player_turn(&mut self, turn: u8) -> ();
+	fn set_player_turn(&mut self, turn: u8);
 
 	fn get_state(&self) -> GameState;
-	fn set_state(&mut self, state: GameState) -> ();
+	fn set_state(&mut self, state: GameState);
 
 	fn borrow_players(&self) -> &Players<Account, MaxPlayers>;
 
 	fn get_selection_size(&self) -> u8;
-	fn set_selection_size(&mut self, selection_size: u8) -> ();
+	fn set_selection_size(&mut self, selection_size: u8);
 
-	fn next_turn(&mut self) -> ();
+	fn next_turn(&mut self);
 }
 
 pub type GameId = [u8; 32];
@@ -80,7 +80,7 @@ impl<Account, BlockNumber, MaxPlayers, MaxTiles> GameProperties<Account, MaxPlay
 		((self.player_turn_and_played & 0x80) >> 7) == 1
 	}
 
-	fn set_played(&mut self, played: bool) -> () {
+	fn set_played(&mut self, played: bool) {
 		self.player_turn_and_played = (self.player_turn_and_played & 0x7F) | (played as u8) << 7
 	}
 
@@ -88,7 +88,7 @@ impl<Account, BlockNumber, MaxPlayers, MaxTiles> GameProperties<Account, MaxPlay
 		self.round
 	}
 
-	fn set_round(&mut self, round: u8) -> () {
+	fn set_round(&mut self, round: u8) {
 		self.round = round;
 	}
 
@@ -96,7 +96,7 @@ impl<Account, BlockNumber, MaxPlayers, MaxTiles> GameProperties<Account, MaxPlay
 		self.player_turn_and_played & 0x7F
 	}
 
-	fn set_player_turn(&mut self, turn: u8) -> () {
+	fn set_player_turn(&mut self, turn: u8) {
 		self.player_turn_and_played = (self.player_turn_and_played & 0x80) | turn;
 	}
 
@@ -104,7 +104,7 @@ impl<Account, BlockNumber, MaxPlayers, MaxTiles> GameProperties<Account, MaxPlay
 		self.state
 	}
 
-	fn set_state(&mut self, state: GameState) -> () {
+	fn set_state(&mut self, state: GameState) {
 		self.state = state;
 	}
 
@@ -116,11 +116,11 @@ impl<Account, BlockNumber, MaxPlayers, MaxTiles> GameProperties<Account, MaxPlay
 		self.selection_size
 	}
 
-	fn set_selection_size(&mut self, selection_size: u8) -> () {
+	fn set_selection_size(&mut self, selection_size: u8) {
 		self.selection_size = selection_size;
 	}
 
-	fn next_turn(&mut self) -> () {
+	fn next_turn(&mut self) {
 		let player_turn = self.get_player_turn();
 
 		let next_player_turn =
@@ -249,20 +249,28 @@ where
 	pub fn try_new<DefaultPlayerResources>(
 		size: usize,
 		game_id: GameId,
-	) -> Result<HexBoard<Tile, MaxGridSize>, ()>
+	) -> Option<HexBoard<Tile, MaxGridSize>>
 	where
 		DefaultPlayerResources: Get<[ResourceUnit; 7]>,
 	{
-		let mut new_hex_grid: HexGrid<Tile, MaxGridSize> =
-			vec![Default::default(); size].try_into().map_err(|_| ())?;
+		if size > MaxGridSize::get() as usize {
+			return None;
+		}
 
-		new_hex_grid[size / 2] = Tile::get_home();
+		let maybe_new_hex_grid: Result<HexGrid<Tile, MaxGridSize>, _> =
+			vec![Default::default(); size].try_into();
 
-		Ok(HexBoard::<Tile, MaxGridSize> {
-			resources: DefaultPlayerResources::get(),
-			hex_grid: new_hex_grid,
-			game_id,
-		})
+		if let Ok(mut new_hex_grid) = maybe_new_hex_grid {
+			new_hex_grid[size / 2] = Tile::get_home();
+
+			Some(HexBoard::<Tile, MaxGridSize> {
+				resources: DefaultPlayerResources::get(),
+				hex_grid: new_hex_grid,
+				game_id,
+			})
+		} else {
+			None
+		}
 	}
 
 	pub fn get_stats(&self) -> BoardStats {
@@ -314,7 +322,7 @@ impl BoardStats {
 		self.tiles[tile_type_index]
 	}
 
-	pub fn set_tiles(&mut self, tile_type: TileType, value: u8) -> () {
+	pub fn set_tiles(&mut self, tile_type: TileType, value: u8) {
 		self.tiles[tile_type as usize] = value;
 	}
 
@@ -322,7 +330,7 @@ impl BoardStats {
 		self.levels[(tile_type as usize).saturating_mul(NUMBER_OF_LEVELS).saturating_add(level)]
 	}
 
-	pub fn set_levels(&mut self, tile_type: TileType, level: u8, value: u8) -> () {
+	pub fn set_levels(&mut self, tile_type: TileType, level: u8, value: u8) {
 		self.levels[(tile_type as usize)
 			.saturating_mul(NUMBER_OF_LEVELS)
 			.saturating_add(level as usize)] = value;
@@ -334,7 +342,7 @@ impl BoardStats {
 			.saturating_add(pattern as usize)]
 	}
 
-	pub fn set_patterns(&mut self, tile_type: TileType, pattern: TilePattern, value: u8) -> () {
+	pub fn set_patterns(&mut self, tile_type: TileType, pattern: TilePattern, value: u8) {
 		self.patterns[(tile_type as usize)
 			.saturating_mul(NUMBER_OF_PATTERNS)
 			.saturating_add(pattern as usize)] = value;
