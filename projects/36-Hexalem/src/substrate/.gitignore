@@ -6,6 +6,29 @@
 
 .DS_Store
 
-# direnv files
-.envrc
+# The cache for docker container dependency
+.cargo/*
+!.cargo/config.toml
+
+# The cache for chain data in container
+.local
+
+# direnv cache
 .direnv
+
+.idea/
+
+# local test chain data
+data
+
+# chain specs
+node/service/res/*
+!node/service/res/testnet.json
+
+#Tarpaulin code coverage
+*.profraw
+cobertura.xml
+
+#IDEs
+.vscode
+.idea
