@@ -1,8 +1,4 @@
-use crate::{
-	mock::{self, *},
-	pallet, Error, Event, GameProperties, GameState, GameStorage, GetTileInfo, HexBoardStorage,
-	HexGrid, Move, ResourceType, HexBoard,
-};
+use crate::{mock::*, types::*, *};
 use frame_support::{assert_noop, assert_ok};
 
 #[test]
@@ -16,7 +12,7 @@ fn create_new_game_successfully() {
 
 		assert_ok!(HexalemModule::create_game(RuntimeOrigin::signed(1), players.clone(), 25));
 		// Read pallet storage and assert an expected result.
-		let hex_board_option: Option<crate::HexBoard<TestRuntime>> =
+		let hex_board_option: Option<crate::HexBoardOf<TestRuntime>> =
 			HexBoardStorage::<TestRuntime>::get(1);
 
 		let hex_board = hex_board_option.unwrap();
@@ -26,7 +22,7 @@ fn create_new_game_successfully() {
 			<mock::TestRuntime as pallet::Config>::DefaultPlayerResources::get()
 		);
 
-		let default_hex_grid: HexGrid<TestRuntime> = vec![
+		let default_hex_grid: HexGridOf<TestRuntime> = vec![
 			HexalemTile(0),
 			HexalemTile(0),
 			HexalemTile(0),
@@ -94,13 +90,13 @@ fn create_new_game_successfully() {
 
 		System::assert_last_event(Event::MovePlayed { game_id, player: 1, move_played }.into());
 
-		let hex_board_option: Option<crate::HexBoard<TestRuntime>> =
+		let hex_board_option: Option<crate::HexBoardOf<TestRuntime>> =
 			HexBoardStorage::<TestRuntime>::get(1);
 
 		let hex_board = hex_board_option.unwrap();
 		assert_eq!(hex_board.resources, [0, 1, 0, 0, 0, 0, 0]);
 
-		let expected_hex_grid: HexGrid<TestRuntime> = vec![
+		let expected_hex_grid: HexGridOf<TestRuntime> = vec![
 			HexalemTile(0),
 			HexalemTile(0),
 			HexalemTile(0),
@@ -151,7 +147,7 @@ fn create_new_game_successfully() {
 
 		System::assert_last_event(Event::NewTurn { game_id, next_player: 2 }.into());
 
-		let hex_board_option: Option<crate::HexBoard<TestRuntime>> =
+		let hex_board_option: Option<crate::HexBoardOf<TestRuntime>> =
 			HexBoardStorage::<TestRuntime>::get(1);
 
 		let hex_board = hex_board_option.unwrap();
@@ -212,7 +208,7 @@ fn test_resource_generation() {
 	new_test_ext().execute_with(|| {
 		assert_ok!(HexalemModule::create_game(RuntimeOrigin::signed(1), vec![1], 25));
 
-		let new_hex_grid: HexGrid<TestRuntime> = vec![
+		let new_hex_grid: HexGridOf<TestRuntime> = vec![
 			HexalemTile(0),
 			HexalemTile(0),
 			HexalemTile(0),
@@ -238,25 +234,25 @@ fn test_resource_generation() {
 			HexalemTile(0),
 			HexalemTile(0),
 			HexalemTile(0),
-		].try_into()
+		]
+		.try_into()
 		.unwrap();
 
-		let hex_board_option: Option<HexBoard<TestRuntime>> =
+		let hex_board_option: Option<HexBoardOf<TestRuntime>> =
 			HexBoardStorage::<TestRuntime>::get(1);
 
 		let hex_board = hex_board_option.unwrap();
 
 		let game_id = hex_board.game_id;
 
-		HexalemModule::set_hex_board(1, HexBoard {
-			game_id,
-			hex_grid: new_hex_grid,
-			resources: [0, 1, 0, 0, 0, 0, 0],
-		});
+		HexalemModule::set_hex_board(
+			1,
+			HexBoard { game_id, hex_grid: new_hex_grid, resources: [0, 1, 0, 0, 0, 0, 0] },
+		);
 
 		assert_ok!(HexalemModule::finish_turn(RuntimeOrigin::signed(1)));
-		
-		let hex_board_option: Option<HexBoard<TestRuntime>> =
+
+		let hex_board_option: Option<HexBoardOf<TestRuntime>> =
 			HexBoardStorage::<TestRuntime>::get(1);
 
 		let hex_board = hex_board_option.unwrap();
@@ -270,7 +266,7 @@ fn test_saturate_99() {
 	new_test_ext().execute_with(|| {
 		assert_ok!(HexalemModule::create_game(RuntimeOrigin::signed(1), vec![1], 25));
 
-		let new_hex_grid: HexGrid<TestRuntime> = vec![
+		let new_hex_grid: HexGridOf<TestRuntime> = vec![
 			HexalemTile(0),
 			HexalemTile(0),
 			HexalemTile(0),
@@ -296,25 +292,25 @@ fn test_saturate_99() {
 			HexalemTile(0),
 			HexalemTile(0),
 			HexalemTile(0),
-		].try_into()
+		]
+		.try_into()
 		.unwrap();
 
-		let hex_board_option: Option<HexBoard<TestRuntime>> =
+		let hex_board_option: Option<HexBoardOf<TestRuntime>> =
 			HexBoardStorage::<TestRuntime>::get(1);
 
 		let hex_board = hex_board_option.unwrap();
 
 		let game_id = hex_board.game_id;
 
-		HexalemModule::set_hex_board(1, HexBoard {
-			game_id,
-			hex_grid: new_hex_grid,
-			resources: [99, 99, 99, 99, 99, 99, 99],
-		});
+		HexalemModule::set_hex_board(
+			1,
+			HexBoard { game_id, hex_grid: new_hex_grid, resources: [99, 99, 99, 99, 99, 99, 99] },
+		);
 
 		assert_ok!(HexalemModule::finish_turn(RuntimeOrigin::signed(1)));
-		
-		let hex_board_option: Option<HexBoard<TestRuntime>> =
+
+		let hex_board_option: Option<HexBoardOf<TestRuntime>> =
 			HexBoardStorage::<TestRuntime>::get(1);
 
 		let hex_board = hex_board_option.unwrap();
