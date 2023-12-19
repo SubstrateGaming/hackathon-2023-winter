@@ -1,5 +1,7 @@
 ﻿using Assets.Scripts.ScreenStates;
 using Substrate.Hexalem.Engine;
+using Substrate.NetApi.Modules;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using UnityEngine;
@@ -27,6 +29,8 @@ namespace Assets.Scripts
 
             var BootomPadding = FlowController.VelContainer.Q<VisualElement>("BottomPadding");
             BootomPadding.Clear();
+
+            TileShaders.StartUpgradeTileShader(ParentState);
 
             TemplateContainer elementInstance = ElementInstance("UI/Elements/BottomTileUpgradeElement");
 
