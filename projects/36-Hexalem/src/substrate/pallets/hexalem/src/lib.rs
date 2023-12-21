@@ -14,15 +14,16 @@ mod mock;
 #[cfg(test)]
 mod tests;
 
-//#[cfg(feature = "runtime-benchmarks")]
+//#[cfg(any(test, feature = "runtime-benchmarks"))]
 //mod benchmarking;
 
 pub mod weights;
+pub use weights::*;
+
 use frame_support::{
 	ensure, sp_runtime, sp_runtime::SaturatedConversion, traits::Get, StorageHasher,
 };
 use scale_info::prelude::vec;
-pub use weights::*;
 
 #[frame_support::pallet]
 pub mod pallet {
@@ -436,8 +437,8 @@ pub mod pallet {
 		// HexBoard has not been initialized yet. Unable to play.
 		HexBoardNotInitialized,
 
-		// The game has already started. Can not start it twice.
-		GameAlreadyStarted,
+		// Creator needs to be included among players at index 0
+		CreatorNotInPlayersAtIndexZero,
 
 		// The game has already started. Can not create it twice.
 		GameAlreadyCreated,
@@ -532,7 +533,7 @@ pub mod pallet {
 			let current_block_number = <frame_system::Pallet<T>>::block_number();
 			let game_id: GameId = Blake2_256::hash(&(&who, &current_block_number).encode());
 
-			// Eensure that the game has not already been created
+			// Ensure that the game has not already been created
 			ensure!(!GameStorage::<T>::contains_key(&game_id), Error::<T>::GameAlreadyCreated);
 
 			// Default Game Config
@@ -557,6 +558,8 @@ pub mod pallet {
 					Some(HexBoard::<T>::new(grid_size as usize, game_id.clone())?),
 				);
 			}
+
+			ensure!(players[0] == who, Error::<T>::CreatorNotInPlayersAtIndexZero);
 
 			GameStorage::<T>::set(game_id, Some(game));
 
@@ -1032,7 +1035,7 @@ impl<T: Config> Pallet<T> {
 	) -> Result<(), sp_runtime::DispatchError> {
 		let tile = hex_board.hex_grid[index as usize];
 
-		if tile.get_pattern() == TilePattern::Normal {
+		if tile.get_pattern() != TilePattern::Normal {
 			return Ok(())
 		}
 
