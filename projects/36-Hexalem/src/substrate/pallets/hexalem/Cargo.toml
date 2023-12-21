@@ -19,6 +19,7 @@ hex = { workspace = true, features = ["alloc"] }
 # Substrate (wasm)
 frame-support      = { workspace = true }
 frame-system       = { workspace = true }
+frame-benchmarking = { workspace = true, optional = true }
 parity-scale-codec = { workspace = true, features = [ "derive", "max-encoded-len" ] }
 scale-info         = { workspace = true, features = [ "derive" ] }
 
@@ -32,6 +33,8 @@ default = ["std"]
 std = [
     "parity-scale-codec/std",
     "scale-info/std",
+    "frame-benchmarking/std",
 	"frame-support/std",
 	"frame-system/std",
 ]
+runtime-benchmarks = ["frame-benchmarking/runtime-benchmarks"]

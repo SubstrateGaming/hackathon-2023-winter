@@ -458,7 +458,7 @@ impl pallet_sudo::Config for Runtime {
 /// Configure the pallet-hexalem in pallets/hexalem.
 impl pallet_hexalem::Config for Runtime {
 	type RuntimeEvent = RuntimeEvent;
-	type WeightInfo = pallet_hexalem::weights::SubstrateWeight<Runtime>;
+	type WeightInfo = pallet_hexalem::weights::HexalemWeightInfo<Runtime>;
 	type MaxPlayers = HexalemMaxPlayers;
 	type MinPlayers = HexalemMinPlayers;
 	type MaxRounds = HexalemMaxRounds;
@@ -536,6 +536,7 @@ mod benches {
 		[pallet_balances, Balances]
 		[pallet_timestamp, Timestamp]
 		[pallet_sudo, Sudo]
+		[pallet_hexalem, HexalemModule]
 	);
 }
 
@@ -729,7 +730,8 @@ impl_runtime_apis! {
 		fn dispatch_benchmark(
 			config: frame_benchmarking::BenchmarkConfig
 		) -> Result<Vec<frame_benchmarking::BenchmarkBatch>, sp_runtime::RuntimeString> {
-			use frame_benchmarking::{baseline, Benchmarking, BenchmarkBatch, TrackedStorageKey};
+			use frame_benchmarking::{baseline, Benchmarking, BenchmarkBatch};
+			use sp_core::storage::TrackedStorageKey;
 
 			use frame_system_benchmarking::Pallet as SystemBench;
 			use baseline::Pallet as BaselineBench;

@@ -14,6 +14,7 @@ targets = ["x86_64-unknown-linux-gnu"]
 
 
 [dependencies]
+hex-literal = { workspace = true, optional = true }
 
 # Parity codec
 parity-scale-codec = { workspace = true }
@@ -92,9 +93,12 @@ std = [
 	"sp-version/std",
 ]
 runtime-benchmarks = [
+	"frame-benchmarking",
 	"frame-support/runtime-benchmarks",
 	"frame-system-benchmarking/runtime-benchmarks",
 	"frame-system/runtime-benchmarks",
+	"pallet-hexalem/runtime-benchmarks",
+	"hex-literal",
 	"pallet-balances/runtime-benchmarks",
 	"pallet-grandpa/runtime-benchmarks",
 	"pallet-sudo/runtime-benchmarks",

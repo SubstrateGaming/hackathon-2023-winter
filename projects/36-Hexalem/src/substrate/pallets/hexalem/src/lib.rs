@@ -14,11 +14,12 @@ mod mock;
 #[cfg(test)]
 mod tests;
 
-//#[cfg(any(test, feature = "runtime-benchmarks"))]
-//mod benchmarking;
+#[cfg(feature = "runtime-benchmarks")]
+mod benchmarking;
 
 pub mod weights;
-pub use weights::*;
+
+use crate::{weights::WeightInfo};
 
 use frame_support::{
 	ensure, sp_runtime, sp_runtime::SaturatedConversion, traits::Get, StorageHasher,
@@ -61,7 +62,7 @@ pub mod pallet {
 	pub struct Game<T: Config> {
 		pub state: GameState,
 		pub player_turn_and_played: u8,
-		last_played_block: <frame_system::Pallet<T> as crate::sp_runtime::traits::BlockNumberProvider>::BlockNumber,
+		pub last_played_block: <frame_system::Pallet<T> as crate::sp_runtime::traits::BlockNumberProvider>::BlockNumber,
 		pub players: Players<T>, // Player AccountIds
 		pub selection: TileSelection<T>,
 		pub selection_size: u8,
@@ -501,10 +502,10 @@ pub mod pallet {
 		BlocksToPlayLimitNotPassed,
 	}
 
-	#[pallet::call]
+	#[pallet::call(weight(<T as Config>::WeightInfo))]
 	impl<T: Config> Pallet<T> {
 		#[pallet::call_index(0)]
-		#[pallet::weight(10_000 + T::DbWeight::get().reads_writes(1,1).ref_time())]
+		#[pallet::weight(T::WeightInfo::create_game(99, 2))]
 		pub fn create_game(
 			origin: OriginFor<T>,
 			players: Vec<T::AccountId>,

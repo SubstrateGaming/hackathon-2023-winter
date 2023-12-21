@@ -22,7 +22,7 @@
 // --repeat
 // 10
 // --output
-// pallets/hexalem/src/weights.rs
+// pallets/hexalem/src/new-weights.rs
 
 #![cfg_attr(rustfmt, rustfmt_skip)]
 #![allow(unused_parens)]
@@ -32,30 +32,23 @@
 use frame_support::{traits::Get, weights::Weight};
 use core::marker::PhantomData;
 
-pub trait WeightInfo {
-	fn create_game(m: u32, n: u32) -> Weight;
-}
-
 /// Weight functions for `pallet_hexalem`.
-pub struct HexalemWeightInfo<T>(PhantomData<T>);
-impl<T: frame_system::Config> WeightInfo for HexalemWeightInfo<T> {
+pub struct WeightInfo<T>(PhantomData<T>);
+impl<T: frame_system::Config> pallet_hexalem::WeightInfo for WeightInfo<T> {
 	/// Storage: `HexalemModule::GameStorage` (r:1 w:1)
 	/// Proof: `HexalemModule::GameStorage` (`max_values`: None, `max_size`: Some(3277), added: 5752, mode: `MaxEncodedLen`)
 	/// Storage: `HexalemModule::HexBoardStorage` (r:100 w:100)
 	/// Proof: `HexalemModule::HexBoardStorage` (`max_values`: None, `max_size`: Some(137), added: 2612, mode: `MaxEncodedLen`)
-	/// The range of component `m` is `[0, 100]`.
 	/// The range of component `n` is `[0, 99]`.
-	fn create_game(m: u32, n: u32, ) -> Weight {
+	fn create_game(n: u32, ) -> Weight {
 		// Proof Size summary in bytes:
 		//  Measured:  `6`
 		//  Estimated: `6742 + n * (2612 ±0)`
-		// Minimum execution time: 24_000_000 picoseconds.
-		Weight::from_parts(24_133_333, 0)
+		// Minimum execution time: 22_000_000 picoseconds.
+		Weight::from_parts(23_166_666, 0)
 			.saturating_add(Weight::from_parts(0, 6742))
-			// Standard Error: 20_183
-			.saturating_add(Weight::from_parts(5_333, 0).saturating_mul(m.into()))
-			// Standard Error: 20_387
-			.saturating_add(Weight::from_parts(3_394_276, 0).saturating_mul(n.into()))
+			// Standard Error: 21_040
+			.saturating_add(Weight::from_parts(3_560_606, 0).saturating_mul(n.into()))
 			.saturating_add(T::DbWeight::get().reads(2))
 			.saturating_add(T::DbWeight::get().reads((1_u64).saturating_mul(n.into())))
 			.saturating_add(T::DbWeight::get().writes(2))
