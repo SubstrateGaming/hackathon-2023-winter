@@ -23,6 +23,8 @@ namespace Assets.Scripts
         private Button _btnActionTitle;
         private Button _btnActionCancel;
 
+        private GameObject selectedTileObject;
+
         public PlayTileSelectSubState(FlowController flowController, ScreenBaseState parent)
             : base(flowController, parent)
         {
@@ -98,6 +100,7 @@ namespace Assets.Scripts
                 Renderer renderer = tileObject.GetComponent<Renderer>();
                 renderer.material = new Material(_selectedMat);
                 _btnActionTitle.SetEnabled(true);
+                selectedTileObject = tileObject;
             }
             else if (PlayScreenState.SelectedGridIndex == index)
             {
@@ -112,12 +115,34 @@ namespace Assets.Scripts
                 Renderer renderer = tileObject.GetComponent<Renderer>();
                 renderer.material = new Material(_selectedMat);
                 _btnActionTitle.SetEnabled(true);
+                selectedTileObject = tileObject;
             }
         }
 
         private async void OnActionClicked(ClickEvent evt)
         {
             _btnActionTitle.SetEnabled(false);
+            /*
+            var tile = Grid.PlayerGrid.transform.GetChild(PlayScreenState.SelectedGridIndex).GetChild(0).GetComponent<Renderer>();
+
+            var tile2 = Grid.PlayerGrid.transform.GetChild(12).GetChild(0).GetComponent<Renderer>();
+
+            
+
+            tile2.SetMaterials(new List<Material>() { dissolveShader });
+            */
+
+            Material dissolveShader = Resources.Load<Material>("Shaders/DissolveShader");
+
+            selectedTileObject.GetComponent<Renderer>().material = dissolveShader;
+
+            selectedTileObject.GetComponent<Renderer>().material.SetFloat("_Progress", 0.5f);
+
+            //  // selectedTileObject.AddComponent(typeof(TileDissolver));
+
+            //var _disolver = new TileDissolver(new Renderer[]{ tile, tile2 });
+
+            await System.Threading.Tasks.Task.Delay(5000);
 
             if (!Storage.UpdateHexalem)
             {
