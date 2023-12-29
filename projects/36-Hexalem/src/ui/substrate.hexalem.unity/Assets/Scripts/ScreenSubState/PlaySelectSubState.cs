@@ -54,9 +54,7 @@ namespace Assets.Scripts
         {
             Debug.Log($"[{this.GetType().Name}][SUB] OnGridTileClicked Change to Upgrade, if possible.");
 
-            var pIndex = 0;
-
-            HexaTile tile = Storage.HexaGame.HexaTuples[pIndex].board[index];
+            HexaTile tile = Storage.HexaGame.HexaTuples[PlayScreenState.PlayerIndex].board[index];
 
             if (tile.IsEmpty())
             {
@@ -87,7 +85,7 @@ namespace Assets.Scripts
 
                 tileCard.Q<Label>("LblTileName").text = tileOffer.TileToBuy.TileType.ToString() + "(Norm)";
 
-                tileCard.Q<Label>("LblRoundPre").text = "(+1";
+                tileCard.Q<Label>("LblRound").text = HelperUI.TileRoundDescription(tileOffer.TileToBuy);
                 tileCard.Q<Label>("LblManaCost").text = "1";
 
                 var velTileImage = tileCard.Q<VisualElement>("VelTileImage");

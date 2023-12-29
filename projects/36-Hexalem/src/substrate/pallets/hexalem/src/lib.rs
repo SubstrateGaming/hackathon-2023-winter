@@ -14,7 +14,7 @@ mod mock;
 #[cfg(test)]
 mod tests;
 
-//#[cfg(feature = "runtime-benchmarks")]
+//#[cfg(any(test, feature = "runtime-benchmarks"))]
 //mod benchmarking;
 
 mod types;
@@ -177,8 +177,8 @@ pub mod pallet {
 		// HexBoard has not been initialized yet. Unable to play.
 		HexBoardNotInitialized,
 
-		// The game has already started. Can not start it twice.
-		GameAlreadyStarted,
+		// Creator needs to be included among players at index 0
+		CreatorNotInPlayersAtIndexZero,
 
 		// The game has already started. Can not create it twice.
 		GameAlreadyCreated,
@@ -273,8 +273,8 @@ pub mod pallet {
 			let current_block_number = <frame_system::Pallet<T>>::block_number();
 			let game_id: GameId = Blake2_256::hash(&(&who, &current_block_number).encode());
 
-			// Eensure that the game has not already been created
-			ensure!(!GameStorage::<T>::contains_key(game_id), Error::<T>::GameAlreadyCreated);
+			// Ensure that the game has not already been created
+			ensure!(!GameStorage::<T>::contains_key(&game_id), Error::<T>::GameAlreadyCreated);
 
 			// Default Game Config
 			let mut game = Game {
@@ -305,6 +305,8 @@ pub mod pallet {
 					),
 				);
 			}
+
+			ensure!(players[0] == who, Error::<T>::CreatorNotInPlayersAtIndexZero);
 
 			GameStorage::<T>::set(game_id, Some(game));
 
@@ -564,6 +566,26 @@ pub mod pallet {
 
 			Ok(())
 		}
+
+		#[pallet::call_index(7)]
+		#[pallet::weight(10_000 + T::DbWeight::get().reads_writes(1,1).ref_time())]
+		pub fn root_set_game(origin: OriginFor<T>, game_id: GameId, game: Game<T>) -> DispatchResult  {
+			ensure_root(origin)?;
+
+			<GameStorage<T>>::set(&game_id, Some(game));
+
+			Ok(())
+		}
+
+		#[pallet::call_index(8)]
+		#[pallet::weight(10_000 + T::DbWeight::get().reads_writes(1,1).ref_time())]
+		pub fn root_set_hex_board(origin: OriginFor<T>, player: AccountId<T>, hex_board: HexBoard<T>) -> DispatchResult  {
+			ensure_root(origin)?;
+
+			<HexBoardStorage<T>>::set(&player, Some(hex_board));
+			
+			Ok(())
+		}
 	}
 }
 
@@ -752,7 +774,7 @@ impl<T: Config> Pallet<T> {
 	) -> Result<(), sp_runtime::DispatchError> {
 		let tile = hex_board.hex_grid[index as usize];
 
-		if tile.get_pattern() == TilePattern::Normal {
+		if tile.get_pattern() != TilePattern::Normal {
 			return Ok(())
 		}
 
@@ -1040,10 +1062,13 @@ impl<T: Config> Pallet<T> {
 		cmp::min(x, 99)
 	}
 
-	/// Set the block number to something in particular. Can be used as an alternative to
-	/// `initialize` for tests that don't need to bother with the other environment entries.
 	#[cfg(any(feature = "std", feature = "runtime-benchmarks", test))]
-	pub fn set_hex_board(player: AccountIdOf<T>, hex_board: HexBoardOf<T>) {
-		<HexBoardStorage<T>>::set(player, Some(hex_board));
+	pub fn set_hex_board(player: AccountId<T>, hex_board: HexBoard<T>) {
+		<HexBoardStorage<T>>::set(&player, Some(hex_board));
+	}
+
+	#[cfg(any(feature = "std", feature = "runtime-benchmarks", test))]
+	pub fn set_game(game_id: GameId, game: Game<T>) {
+		<GameStorage<T>>::set(&game_id, Some(game));
 	}
 }

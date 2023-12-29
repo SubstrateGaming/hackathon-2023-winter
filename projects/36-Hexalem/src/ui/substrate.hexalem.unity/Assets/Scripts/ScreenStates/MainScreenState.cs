@@ -39,9 +39,9 @@ namespace Assets.Scripts.ScreenStates
             _lblAddress = topBound.Query<Label>("LblAddress");
             _lblToken = topBound.Query<Label>("LblToken");
 
-            _lblNodeVersion = topBound.Query<Label>("LblNodeVersion");
             _lblNodeUrl = topBound.Query<Label>("LblNodeUrl");
-            _lblNodeUrl.text = Network.NodeUrl;
+            _lblNodeUrl.text = Network.CurrentNodeType.ToString();
+            _lblNodeVersion = topBound.Query<Label>("LblNodeVersion");
             _lblConnection = topBound.Query<Label>("LblConnection");
             _lblBlockNumber = topBound.Query<Label>("LblBlockNumber");
 
@@ -50,6 +50,8 @@ namespace Assets.Scripts.ScreenStates
 
             // load initial sub state
             FlowController.ChangeScreenSubState(ScreenState.MainScreen, ScreenSubState.MainChoose);
+
+
 
             // subscribe to connection changes
             Network.ConnectionStateChanged += OnConnectionStateChanged;
@@ -76,12 +78,12 @@ namespace Assets.Scripts.ScreenStates
             if (IsConnected)
             {
                 _lblConnection.text = "Online";
-                _lblConnection.style.color = GameConstant.PastelGreen;
+                //_lblConnection.style.unityTextOutlineColor = GameConstant.PastelGreen;
             }
             else
             {
                 _lblConnection.text = "Offline";
-                _lblConnection.style.color = GameConstant.PastelRed;
+                //_lblConnection.style.unityTextOutlineColor = GameConstant.PastelRed;
             }
         }
 
@@ -91,23 +93,25 @@ namespace Assets.Scripts.ScreenStates
 
             if (Network.Client.Account != null)
             {
-                _lblAccount.text = Network.CurrentAccountType.Value.ToString();
+                _lblAccount.text = Network.CurrentAccountType.ToString();
                 Debug.Log(Network.Client.Account.Value);
                 var address = Network.Client.Account.Value;
                 _lblAddress.text = address.Substring(0, 6) + " ... " + address.Substring(20, 6);
             }
             else
             {
-                _lblAccount.text = "...";
+                //_lblAccount.text = "...";
             }
 
             if (Storage.AccountInfo != null && Storage.AccountInfo.Data != null)
             {
                 _lblToken.text = GameConstant.BalanceFormatter(BigInteger.Divide(Storage.AccountInfo.Data.Free, new BigInteger(SubstrateNetwork.DECIMALS))) + " HEXA";
+                var specName = Network.Client.SubstrateClient.RuntimeVersion.SpecName;
+                _lblNodeVersion.text = specName.Length > 20 ? $"{specName[..17]}..." : specName;
             }
             else
             {
-                _lblToken.text = ".";
+                //_lblToken.text = ".";
             }
         }
     }

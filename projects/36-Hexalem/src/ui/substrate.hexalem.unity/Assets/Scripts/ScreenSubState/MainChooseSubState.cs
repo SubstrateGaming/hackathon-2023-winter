@@ -1,9 +1,11 @@
 ﻿using Substrate.Hexalem.Engine;
 using Substrate.Integration.Client;
 using Substrate.NetApi.Model.Types;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Xml;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -169,7 +171,7 @@ namespace Assets.Scripts.ScreenStates
                 { (new HexaPlayer(Network.Client.Account.Bytes), new HexaBoard(new byte[(int)GridSize.Medium])) }
             };
 
-            var gameId = new byte[GameConfig.GAME_STORAGE_ID];
+            var gameId = new byte[HexalemConfig.GAME_STORAGE_ID];
             _random.NextBytes(gameId);
             var hexaGame = new HexaGame(gameId, hexaTuple);
             hexaGame.Init(1234567);

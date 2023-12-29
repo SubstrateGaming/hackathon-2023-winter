@@ -21,6 +21,12 @@ namespace Assets.Scripts
         Dave
     }
 
+    public enum NodeType
+    {
+        Local,
+        Tanssi
+    }
+
     public delegate void ExtrinsicStateUpdate(string subscriptionId, ExtrinsicStatus extrinsicUpdate);
 
     public class NetworkManager : Singleton<NetworkManager>
@@ -45,15 +51,20 @@ namespace Assets.Scripts
         public MiniSecret MiniSecretDave => new MiniSecret(Utils.HexToByteArray("0x868020ae0687dda7d57565093a69090211449845a7e11453612800b663307246"), ExpandMode.Ed25519);
         public Account Dave => Account.Build(KeyType.Sr25519, MiniSecretDave.ExpandToSecret().ToBytes(), MiniSecretDave.GetPair().Public.Key);
 
-        // Sudo account if needed
-        public Account Sudo => Alice;
+        public MiniSecret MiniSecretSudo => new MiniSecret(Utils.HexToByteArray(""), ExpandMode.Ed25519);
+        public Account SudoHexalem => Account.Build(KeyType.Sr25519, MiniSecretSudo.ExpandToSecret().ToBytes(), MiniSecretSudo.GetPair().Public.Key);
 
-        private readonly string _nodeUrl = "ws://127.0.0.1:9944";
+        // Sudo account if needed
+        public Account Sudo { get; private set; }
+
+        private string _nodeUrl;
         public string NodeUrl => _nodeUrl;
 
         private readonly NetworkType _networkType = NetworkType.Live;
 
-        public AccountType? CurrentAccountType { get; private set; }
+        public AccountType CurrentAccountType { get; private set; }
+
+        public NodeType CurrentNodeType { get; private set; }
 
         private SubstrateNetwork _client;
         public SubstrateNetwork Client => _client;
@@ -64,6 +75,11 @@ namespace Assets.Scripts
         {
             base.Awake();
             //Your code goes here
+            CurrentAccountType = AccountType.Alice;
+            CurrentNodeType = NodeType.Local;
+            Sudo = Alice;
+            _nodeUrl = "ws://127.0.0.1:9944";
+            InitializeClient();
         }
 
         public void Start()
@@ -98,7 +114,7 @@ namespace Assets.Scripts
             ExtrinsicCheck?.Invoke();
         }
 
-        public bool ChangeAccount(AccountType accountType)
+        public bool SetAccount(AccountType accountType)
         {
             CurrentAccountType = accountType;
 
@@ -128,6 +144,26 @@ namespace Assets.Scripts
             return true;
         }
 
+        public bool ToggleNodeType()
+        {
+            switch (CurrentNodeType)
+            {
+                case NodeType.Tanssi:
+                    CurrentNodeType = NodeType.Local;
+                    _nodeUrl = "ws://127.0.0.1:9944";
+                    Sudo = Alice;
+                    break;
+                default:
+                    CurrentNodeType = NodeType.Tanssi;
+                    _nodeUrl = "wss://fraa-dancebox-3023-rpc.a.dancebox.tanssi.network";
+                    Sudo = SudoHexalem;
+                    break;
+            }
+
+            InitializeClient();
+            return true;
+        }
+
         public List<Wallet> StoredWallets()
         {
             var result = new List<Wallet>();
@@ -152,12 +188,8 @@ namespace Assets.Scripts
         // Start is called before the first frame update
         public void InitializeClient()
         {
-            if (_client != null)
-            {
-                return;
-            }
-
             _client = new SubstrateNetwork(null, _networkType, _nodeUrl);
+            SetAccount(CurrentAccountType);
         }
     }
 }

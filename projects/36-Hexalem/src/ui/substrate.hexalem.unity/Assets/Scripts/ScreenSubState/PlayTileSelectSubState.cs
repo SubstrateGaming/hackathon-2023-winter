@@ -72,9 +72,7 @@ namespace Assets.Scripts
 
         private void OnGridTileClicked(GameObject tileObject, int index)
         {
-            var pIndex = 0;
-
-            HexaTile tile = Storage.HexaGame.HexaTuples[pIndex].board[index];
+            HexaTile tile = Storage.HexaGame.HexaTuples[PlayScreenState.PlayerIndex].board[index];
 
             if (!tile.IsEmpty())
             {
@@ -88,9 +86,9 @@ namespace Assets.Scripts
                 return;
             }
 
-            if (!Storage.HexaGame.CanChooseAndPlace((byte)pIndex, PlayScreenState.SelectedCardIndex, index))
+            if (!Storage.HexaGame.CanChooseAndPlace((byte)PlayScreenState.PlayerIndex, PlayScreenState.SelectedCardIndex, index))
             {
-                Debug.Log($"Bad Chose & Place player {pIndex}, selection index {PlayScreenState.SelectedCardIndex} and grid index {index}");
+                Debug.Log($"Bad Chose & Place player {PlayScreenState.PlayerIndex}, selection index {PlayScreenState.SelectedCardIndex} and grid index {index}");
                 return;
             }
 
@@ -183,7 +181,7 @@ namespace Assets.Scripts
 
             tileCard.Q<Label>("LblTileName").text = selectTile.TileToBuy.TileType.ToString() + "(Norm)";
 
-            tileCard.Q<Label>("LblRoundPre").text = "(+1";
+            tileCard.Q<Label>("LblRound").text = HelperUI.TileRoundDescription(selectTile.TileToBuy);
             tileCard.Q<Label>("LblManaCost").text = "1";
 
             var velTileImage = tileCard.Q<VisualElement>("VelTileImage");
@@ -222,7 +220,7 @@ namespace Assets.Scripts
 
             _velTileCardBox.Add(tileCard);
 
-            _lblTileDescription.text = HelperUI.TileDescription(selectTile.TileToBuy.TileType);
+            _lblTileDescription.text = HelperUI.TileDescription(selectTile);
         }
 
         public static void DisplayManaBottle(TemplateContainer tileCard, HexaPlayer player)

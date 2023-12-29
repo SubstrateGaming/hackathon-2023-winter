@@ -2,11 +2,13 @@
 using Substrate.Integration.Client;
 using Substrate.NetApi.Model.Types.Primitive;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using UnityEngine;
 using UnityEngine.UIElements;
+using static Assets.Scripts.GridManager;
 
 namespace Assets.Scripts.ScreenStates
 {
@@ -14,6 +16,9 @@ namespace Assets.Scripts.ScreenStates
     {
         public int SelectedGridIndex { get; set; } = -1;
         public int SelectedCardIndex { get; set; } = -1;
+
+        public delegate void ZoomClickHandler();
+        public static event ZoomClickHandler ZoomClicked;
 
         public VisualTreeAsset TileCardElement { get; }
 
@@ -116,6 +121,9 @@ namespace Assets.Scripts.ScreenStates
                     break;
             }
 
+            // Portrait is also use to zoom in / zoom out
+            velPortrait.RegisterCallback<ClickEvent>(OnPortraitClicked);
+
             _lblManaValue = topBound.Q<Label>("LblManaValue");
             _lblHumansValue = topBound.Q<Label>("LblHumansValue");
             _lblWaterValue = topBound.Q<Label>("LblWaterValue");
@@ -152,6 +160,8 @@ namespace Assets.Scripts.ScreenStates
             OnChangedHexaPlayer(Storage.HexaGame.HexaTuples[PlayerIndex].player);
             OnChangedHexaBoard(Storage.HexaGame.HexaTuples[PlayerIndex].board);
 
+            Grid.OnSwipeEvent += OnSwipeEvent;
+
             Storage.OnChangedHexaBoard += OnChangedHexaBoard;
             Storage.OnChangedHexaPlayer += OnChangedHexaPlayer;
             Storage.OnNextPlayerTurn += OnNextPlayerTurn;
@@ -170,6 +180,8 @@ namespace Assets.Scripts.ScreenStates
             // remove container
             FlowController.VelContainer.RemoveAt(1);
 
+            Grid.OnSwipeEvent -= OnSwipeEvent;
+
             Storage.OnChangedHexaBoard -= OnChangedHexaBoard;
             Storage.OnChangedHexaPlayer -= OnChangedHexaPlayer;
             Storage.OnNextPlayerTurn -= OnNextPlayerTurn;
@@ -179,6 +191,11 @@ namespace Assets.Scripts.ScreenStates
             Network.ExtrinsicCheck -= OnExtrinsicCheck;
             Storage.OnStorageUpdated -= OnStorageUpdated;
             Storage.OnNextBlocknumber -= OnNextBlockNumber;
+        }
+
+        private void OnSwipeEvent(Vector3 direction)
+        {
+            Grid.MoveCamera(direction);
         }
 
         private void OnNextBlockNumber(uint blocknumber)
@@ -197,7 +214,7 @@ namespace Assets.Scripts.ScreenStates
             lastBlockNumber.Create(Storage.HexaGame.LastMove);
             var blockNumberPassed = blocknumber - lastBlockNumber;
 
-            var percentage = System.Math.Min((float)blockNumberPassed / GameConfig.MAX_TURN_BLOCKS * 100, 100);
+            var percentage = System.Math.Min((float)blockNumberPassed / HexalemConfig.GetInstance().BlocksToPlayLimit * 100, 100);
             Debug.Log($"PlayScreenState LastBlockNumber = {lastBlockNumber} | blockNumberPassed = {blockNumberPassed} | percentage = {percentage}");
             _velTimerProgress.style.height = Length.Percent(percentage);
 
@@ -298,6 +315,11 @@ namespace Assets.Scripts.ScreenStates
                 _subscriptionOrder.Remove(subscriptionId);
                 _subscriptionDict.Remove(subscriptionId);
             }
+        }
+
+        private void OnPortraitClicked(ClickEvent evt)
+        {
+            ZoomClicked?.Invoke();
         }
 
         private void OnRankingClicked(ClickEvent evt)
