@@ -3,17 +3,17 @@ authors    = [ "Substrate Gaming <https://github.com/SubstrateGaming>" ]
 edition    = "2021"
 homepage   = "https://github.com/SubstrateGaming"
 repository = "https://github.com/SubstrateGaming"
-version    = "4.0.0-dev"
+version    = "0.1.0"
 
 [workspace]
 members = [
     "node",
-    "pallets/hexalem",
+    "pallets/*",
     "runtime",
 ]
+resolver = "2"
 
 [workspace.dependencies]
-
 # General
 async-trait = { version = "0.1.73", default-features = false}
 clap        = { version = "4.4.6", default-features = false }

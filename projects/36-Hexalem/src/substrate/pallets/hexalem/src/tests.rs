@@ -1,9 +1,4 @@
-use crate::{
-	mock::{self, *},
-	pallet, Error, Event, GameProperties, GameState, GameStorage, GetTileInfo, HexBoard,
-	HexBoardStorage, HexGrid, Move, ResourceType, ResourceUnit, TilePattern, TileType,
-	NUMBER_OF_LEVELS, NUMBER_OF_RESOURCE_TYPES,
-};
+use crate::{mock::*, types::*, *};
 use frame_support::{assert_noop, assert_ok};
 
 #[test]
@@ -17,7 +12,7 @@ fn game_loop() {
 
 		assert_ok!(HexalemModule::create_game(RuntimeOrigin::signed(1), players.clone(), 25));
 		// Read pallet storage and assert an expected result.
-		let hex_board_option: Option<crate::HexBoard<TestRuntime>> =
+		let hex_board_option: Option<crate::HexBoardOf<TestRuntime>> =
 			HexBoardStorage::<TestRuntime>::get(1);
 
 		let hex_board = hex_board_option.unwrap();
@@ -27,7 +22,7 @@ fn game_loop() {
 			<mock::TestRuntime as pallet::Config>::DefaultPlayerResources::get()
 		);
 
-		let default_hex_grid: HexGrid<TestRuntime> = vec![
+		let default_hex_grid: HexGridOf<TestRuntime> = vec![
 			HexalemTile(0),
 			HexalemTile(0),
 			HexalemTile(0),
@@ -73,7 +68,7 @@ fn game_loop() {
 
 		assert_eq!(game.get_player_turn(), 0);
 
-		assert_eq!(game.get_played(), false);
+		assert!(!game.get_played());
 
 		assert_eq!(game.get_round(), 0);
 
@@ -95,13 +90,13 @@ fn game_loop() {
 
 		System::assert_last_event(Event::MovePlayed { game_id, player: 1, move_played }.into());
 
-		let hex_board_option: Option<crate::HexBoard<TestRuntime>> =
+		let hex_board_option: Option<crate::HexBoardOf<TestRuntime>> =
 			HexBoardStorage::<TestRuntime>::get(1);
 
 		let hex_board = hex_board_option.unwrap();
 		assert_eq!(hex_board.resources, [0, 1, 0, 0, 0, 0, 0]);
 
-		let expected_hex_grid: HexGrid<TestRuntime> = vec![
+		let expected_hex_grid: HexGridOf<TestRuntime> = vec![
 			HexalemTile(0),
 			HexalemTile(0),
 			HexalemTile(0),
@@ -140,7 +135,7 @@ fn game_loop() {
 
 		assert_eq!(game.get_player_turn(), 0);
 
-		assert_eq!(game.get_played(), true);
+		assert!(game.get_played());
 
 		assert_eq!(game.get_round(), 0);
 
@@ -152,7 +147,7 @@ fn game_loop() {
 
 		System::assert_last_event(Event::NewTurn { game_id, next_player: 2 }.into());
 
-		let hex_board_option: Option<crate::HexBoard<TestRuntime>> =
+		let hex_board_option: Option<crate::HexBoardOf<TestRuntime>> =
 			HexBoardStorage::<TestRuntime>::get(1);
 
 		let hex_board = hex_board_option.unwrap();
@@ -168,7 +163,7 @@ fn game_loop() {
 
 		assert_eq!(game.get_player_turn(), 1);
 
-		assert_eq!(game.get_played(), false);
+		assert!(!game.get_played());
 
 		assert_eq!(game.get_round(), 0);
 
@@ -261,7 +256,7 @@ fn test_resource_generation() {
 	new_test_ext().execute_with(|| {
 		assert_ok!(HexalemModule::create_game(RuntimeOrigin::signed(1), vec![1], 25));
 
-		let new_hex_grid: HexGrid<TestRuntime> = vec![
+		let new_hex_grid: HexGridOf<TestRuntime> = vec![
 			HexalemTile(0),
 			HexalemTile(0),
 			HexalemTile(0),
@@ -291,7 +286,7 @@ fn test_resource_generation() {
 		.try_into()
 		.unwrap();
 
-		let hex_board_option: Option<HexBoard<TestRuntime>> =
+		let hex_board_option: Option<HexBoardOf<TestRuntime>> =
 			HexBoardStorage::<TestRuntime>::get(1);
 
 		let hex_board = hex_board_option.unwrap();
@@ -305,7 +300,7 @@ fn test_resource_generation() {
 
 		assert_ok!(HexalemModule::finish_turn(RuntimeOrigin::signed(1)));
 
-		let hex_board_option: Option<HexBoard<TestRuntime>> =
+		let hex_board_option: Option<HexBoardOf<TestRuntime>> =
 			HexBoardStorage::<TestRuntime>::get(1);
 
 		let hex_board = hex_board_option.unwrap();
@@ -319,7 +314,7 @@ fn test_saturate_99() {
 	new_test_ext().execute_with(|| {
 		assert_ok!(HexalemModule::create_game(RuntimeOrigin::signed(1), vec![1], 25));
 
-		let new_hex_grid: HexGrid<TestRuntime> = vec![
+		let new_hex_grid: HexGridOf<TestRuntime> = vec![
 			HexalemTile(0),
 			HexalemTile(0),
 			HexalemTile(0),
@@ -349,7 +344,7 @@ fn test_saturate_99() {
 		.try_into()
 		.unwrap();
 
-		let hex_board_option: Option<HexBoard<TestRuntime>> =
+		let hex_board_option: Option<HexBoardOf<TestRuntime>> =
 			HexBoardStorage::<TestRuntime>::get(1);
 
 		let hex_board = hex_board_option.unwrap();
@@ -364,7 +359,7 @@ fn test_saturate_99() {
 
 		assert_ok!(HexalemModule::finish_turn(RuntimeOrigin::signed(1)));
 
-		let hex_board_option: Option<HexBoard<TestRuntime>> =
+		let hex_board_option: Option<HexBoardOf<TestRuntime>> =
 			HexBoardStorage::<TestRuntime>::get(1);
 
 		let hex_board = hex_board_option.unwrap();
@@ -378,7 +373,7 @@ fn test_force_finish_turn() {
 	new_test_ext().execute_with(|| {
 		assert_ok!(HexalemModule::create_game(RuntimeOrigin::signed(1), vec![1, 2], 25));
 
-		let hex_board_option: Option<HexBoard<TestRuntime>> =
+		let hex_board_option: Option<HexBoardOf<TestRuntime>> =
 			HexBoardStorage::<TestRuntime>::get(1);
 
 		let hex_board = hex_board_option.unwrap();
@@ -417,7 +412,7 @@ fn play() {
 	new_test_ext().execute_with(|| {
 		assert_ok!(HexalemModule::create_game(RuntimeOrigin::signed(1), vec![1, 2], 25));
 
-		let hex_board_option: Option<HexBoard<TestRuntime>> =
+		let hex_board_option: Option<HexBoardOf<TestRuntime>> =
 			HexBoardStorage::<TestRuntime>::get(1);
 
 		let hex_board = hex_board_option.unwrap();
@@ -477,12 +472,12 @@ fn play_pattern() {
 	new_test_ext().execute_with(|| {
 		assert_ok!(HexalemModule::create_game(RuntimeOrigin::signed(1), vec![1, 2], 25));
 
-		let hex_board_option: Option<HexBoard<TestRuntime>> =
+		let hex_board_option: Option<HexBoardOf<TestRuntime>> =
 			HexBoardStorage::<TestRuntime>::get(1);
 
 		let hex_board = hex_board_option.unwrap();
 
-		let new_hex_grid: HexGrid<TestRuntime> = vec![
+		let new_hex_grid: HexGridOf<TestRuntime> = vec![
 			HexalemTile(0),
 			HexalemTile(0),
 			HexalemTile(0),
@@ -538,7 +533,7 @@ fn play_pattern() {
 			Move { place_index: 21, buy_index: 0 }
 		));
 
-		let hex_board_option: Option<HexBoard<TestRuntime>> =
+		let hex_board_option: Option<HexBoardOf<TestRuntime>> =
 			HexBoardStorage::<TestRuntime>::get(1);
 
 		let hex_board = hex_board_option.unwrap();
@@ -574,7 +569,7 @@ fn play_pattern() {
 			Move { place_index: 8, buy_index: 2 }
 		));
 
-		let hex_board_option: Option<HexBoard<TestRuntime>> =
+		let hex_board_option: Option<HexBoardOf<TestRuntime>> =
 			HexBoardStorage::<TestRuntime>::get(1);
 
 		let hex_board = hex_board_option.unwrap();
@@ -591,7 +586,7 @@ fn play_pattern() {
 			Move { place_index: 17, buy_index: 2 }
 		));
 
-		let hex_board_option: Option<HexBoard<TestRuntime>> =
+		let hex_board_option: Option<HexBoardOf<TestRuntime>> =
 			HexBoardStorage::<TestRuntime>::get(1);
 
 		let hex_board = hex_board_option.unwrap();
@@ -616,14 +611,14 @@ fn upgrade() {
 			Error::<TestRuntime>::NotEnoughResources
 		);
 
-		let hex_board_option: Option<HexBoard<TestRuntime>> =
+		let hex_board_option: Option<HexBoardOf<TestRuntime>> =
 			HexBoardStorage::<TestRuntime>::get(1);
 
 		let hex_board = hex_board_option.unwrap();
 
 		let game_id = hex_board.game_id;
 
-		let new_hex_grid: HexGrid<TestRuntime> = vec![
+		let new_hex_grid: HexGridOf<TestRuntime> = vec![
 			HexalemTile(0),
 			HexalemTile(0),
 			HexalemTile(0),
@@ -699,7 +694,7 @@ fn upgrade() {
 		for level in 0..(NUMBER_OF_LEVELS - 1) {
 			assert_ok!(HexalemModule::upgrade(RuntimeOrigin::signed(1), 12));
 
-			let hex_board_option: Option<HexBoard<TestRuntime>> =
+			let hex_board_option: Option<HexBoardOf<TestRuntime>> =
 				HexBoardStorage::<TestRuntime>::get(1);
 
 			let hex_board = hex_board_option.unwrap();

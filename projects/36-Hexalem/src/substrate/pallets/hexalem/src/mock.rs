@@ -1,42 +1,45 @@
 use crate as pallet_hexalem;
-use frame_support::{traits::{ConstU16, ConstU64}, parameter_types};
-use parity_scale_codec::{Encode, Decode, MaxEncodedLen};
+use frame_support::{
+	parameter_types,
+	traits::{ConstU16, ConstU64, Get},
+};
+use pallet_hexalem::{
+	GetTileInfo, ResourceAmount, ResourceProductions, ResourceType, ResourceUnit, TileCost,
+	TilePattern, TileType, NUMBER_OF_RESOURCE_TYPES, NUMBER_OF_TILE_TYPES,
+};
+use parity_scale_codec::{Decode, Encode, MaxEncodedLen};
 use scale_info::TypeInfo;
 use sp_core::H256;
 use sp_runtime::{
 	traits::{BlakeTwo256, IdentityLookup},
 	BuildStorage,
 };
-use pallet_hexalem::{
-	GetTileInfo, ResourceAmount, ResourceProductions, ResourceType,
-	ResourceUnit, TileCost, TilePattern, TileType, NUMBER_OF_TILE_TYPES, NUMBER_OF_RESOURCE_TYPES,
-};
 
 type Block = frame_system::mocking::MockBlock<TestRuntime>;
 
-#[derive(Encode, Decode, Debug, TypeInfo, Copy, Clone, MaxEncodedLen, Eq, PartialEq)]
+#[derive(Debug, Default, Copy, Clone, Eq, PartialEq, Encode, Decode, TypeInfo, MaxEncodedLen)]
 pub struct HexalemTile(pub u8);
 
 impl GetTileInfo for HexalemTile {
-	fn get_type(&self) -> TileType {
-		TileType::from_u8((self.0 >> 3) & 0x7)
-	}
-
 	fn get_level(&self) -> u8 {
 		(self.0 >> 6) & 0x3
 	}
 
-    fn set_level(&mut self, level: u8) {
-        self.0 = (self.0 & 0x3F) | (level << 6);
-    }
-
-	fn get_pattern(&self) -> TilePattern {
-		TilePattern::from_u8(self.0 & 0x7)
+	fn set_level(&mut self, level: u8) {
+		self.0 = (self.0 & 0x3F) | (level << 6);
 	}
 
-    fn set_pattern(&mut self, pattern: TilePattern) {
-        self.0 = (self.0 & 0xF8) | (pattern as u8);
-    }
+	fn get_type(&self) -> TileType {
+		TileType::from((self.0 >> 3) & 0x7)
+	}
+
+	fn get_pattern(&self) -> TilePattern {
+		TilePattern::from(self.0 & 0x7)
+	}
+
+	fn set_pattern(&mut self, pattern: TilePattern) {
+		self.0 = (self.0 & 0xF8) | (pattern as u8);
+	}
 
 	fn get_home() -> Self {
 		Self(8) // Home level 0
@@ -44,27 +47,30 @@ impl GetTileInfo for HexalemTile {
 }
 
 impl HexalemTile {
-    pub fn new(tile_type: TileType, level: u8, pattern: TilePattern) -> Self {
-        let encoded = ((tile_type as u8) << 3) | ((level & 0x3) << 6) | (pattern as u8 & 0x7);
-        Self(encoded)
-    }
-}
-
-impl Default for HexalemTile {
-	fn default() -> Self {
-		Self(0) // Empty tile
+	pub fn new(tile_type: TileType, level: u8, pattern: TilePattern) -> Self {
+		let encoded = ((tile_type as u8) << 3) | ((level & 0x3) << 6) | (pattern as u8 & 0x7);
+		Self(encoded)
 	}
 }
 
+#[derive(Debug, PartialEq, Eq, Clone, Encode, Decode, MaxEncodedLen, TypeInfo)]
+pub struct ParameterGet<const N: u32>;
+
+impl<const N: u32> Get<u32> for ParameterGet<N> {
+	fn get() -> u32 {
+		N
+	}
+}
+
+pub type HexalemMaxPlayers = ParameterGet<100>;
+pub type HexalemMaxHexGridSize = ParameterGet<49>;
+pub type HexalemMaxTileSelection = ParameterGet<16>;
+
 parameter_types! {
-	pub const HexalemMaxPlayers: u8 = 100;
 	pub const HexalemMinPlayers: u8 = 1;
 	pub const HexalemMaxRounds: u8 = 25;
 
 	pub const HexalemBlocksToPlayLimit: u8 = 10;
-
-	pub const HexalemMaxHexGridSize: u8 = 49;
-	pub const HexalemMaxTileSelection: u8 = 16;
 
 	pub const HexalemTileResourceProductions: [ResourceProductions; NUMBER_OF_TILE_TYPES] = [
 		// Empty
@@ -109,7 +115,7 @@ parameter_types! {
 		},
 	];
 
-	pub const HexalemTileCosts: [TileCost<TestRuntime>; 15] = [
+	pub const HexalemTileCosts: [TileCost<HexalemTile>; 15] = [
 		// tile_to_buy: HexalemTile(16), // Grass, level 0
 		// tile_to_buy: HexalemTile(24), // Water, level 0
 		// tile_to_buy: HexalemTile(32), // Mountain, level 0
@@ -249,5 +255,8 @@ impl pallet_hexalem::Config for TestRuntime {
 
 // Build genesis storage according to the mock runtime.
 pub fn new_test_ext() -> sp_io::TestExternalities {
-	frame_system::GenesisConfig::<TestRuntime>::default().build_storage().unwrap().into()
+	frame_system::GenesisConfig::<TestRuntime>::default()
+		.build_storage()
+		.unwrap()
+		.into()
 }
