@@ -306,7 +306,7 @@ impl<const N: u32> Get<u32> for ParameterGet<N> {
 }
 
 pub type HexalemMaxPlayers = ParameterGet<100>;
-pub type HexalemMaxHexGridSize = ParameterGet<25>;
+pub type HexalemMaxHexGridSize = ParameterGet<49>;
 pub type HexalemMaxTileSelection = ParameterGet<16>;
 
 parameter_types! {
@@ -316,9 +316,6 @@ parameter_types! {
 	pub const HexalemMaxRounds: u8 = 25;
 
 	pub const HexalemBlocksToPlayLimit: u8 = 10;
-
-	pub const HexalemMaxHexGridSize: u8 = 49;
-	pub const HexalemMaxTileSelection: u8 = 16;
 
 	pub const HexalemTileResourceProductions: [ResourceProductions; NUMBER_OF_TILE_TYPES] = [
 		// Empty

@@ -127,12 +127,12 @@ pub mod pallet {
 	#[pallet::storage]
 	// Stores the HexBoard data assigned to a player key.
 	pub type HexBoardStorage<T: Config> =
-		StorageMap<_, Blake2_128Concat, T::AccountId, HexBoardOf<T>>;
+		StorageMap<_, Blake2_128Concat, AccountIdOf<T>, HexBoardOf<T>>;
 
 	#[pallet::storage]
 	// Stores the TargetGoalHash assigned to a player key.
 	pub type TargetGoalStorage<T: Config> =
-		StorageMap<_, Blake2_128Concat, T::AccountId, TargetGoalHash>;
+		StorageMap<_, Blake2_128Concat, AccountIdOf<T>, TargetGoalHash>;
 
 	// Pallets use events to inform users when important changes are made.
 	// https://docs.substrate.io/main-docs/build/events-errors/
@@ -140,12 +140,12 @@ pub mod pallet {
 	#[pallet::generate_deposit(pub(super) fn deposit_event)]
 	pub enum Event<T: Config> {
 		// Game started
-		GameCreated { game_id: GameId, grid_size: u8, players: Vec<T::AccountId> },
+		GameCreated { game_id: GameId, grid_size: u8, players: Vec<AccountIdOf<T>> },
 
 		// Player played a move
-		MovePlayed { game_id: GameId, player: T::AccountId, move_played: Move },
+		MovePlayed { game_id: GameId, player: AccountIdOf<T>, move_played: Move },
 
-		TileUpgraded { game_id: GameId, player: T::AccountId, place_index: u8 },
+		TileUpgraded { game_id: GameId, player: AccountIdOf<T>, place_index: u8 },
 
 		// New selection has been drawn
 		NewTileSelection { game_id: GameId, selection: TileSelectionOf<T> },
@@ -153,13 +153,13 @@ pub mod pallet {
 		// Selection has been refilled
 		SelectionRefilled { game_id: GameId, selection: TileSelectionOf<T> },
 
-		TurnForceFinished { game_id: GameId, player: T::AccountId },
+		TurnForceFinished { game_id: GameId, player: AccountIdOf<T> },
 
 		// New turn
-		NewTurn { game_id: GameId, next_player: T::AccountId },
+		NewTurn { game_id: GameId, next_player: AccountIdOf<T> },
 
 		// Game has finished
-		GameFinished { game_id: GameId /* , winner: T::AccountId */ },
+		GameFinished { game_id: GameId /* , winner: AccountIdOf<T> */ },
 
 		// Event that is never used. It serves the purpose to expose hidden rust enums
 		ExposeEnums { tile_type: TileType, tile_pattern: TilePattern },
@@ -247,10 +247,10 @@ pub mod pallet {
 		#[pallet::weight(10_000 + T::DbWeight::get().reads_writes(1,1).ref_time())]
 		pub fn create_game(
 			origin: OriginFor<T>,
-			players: Vec<T::AccountId>,
+			players: Vec<AccountIdOf<T>>,
 			grid_size: u8,
 		) -> DispatchResult {
-			let who: T::AccountId = ensure_signed(origin)?;
+			let who: AccountIdOf<T> = ensure_signed(origin)?;
 
 			// If you want to play, you need to specify yourself in the Vec as well
 			let number_of_players = players.len();
@@ -318,7 +318,7 @@ pub mod pallet {
 		#[pallet::call_index(1)]
 		#[pallet::weight(10_000 + T::DbWeight::get().reads_writes(1,1).ref_time())]
 		pub fn play(origin: OriginFor<T>, move_played: Move) -> DispatchResult {
-			let who: T::AccountId = ensure_signed(origin)?;
+			let who: AccountIdOf<T> = ensure_signed(origin)?;
 
 			// Ensures that the HexBoard exists
 			let mut hex_board = match HexBoardStorage::<T>::get(&who) {
@@ -398,7 +398,7 @@ pub mod pallet {
 		#[pallet::call_index(2)]
 		#[pallet::weight(10_000 + T::DbWeight::get().reads_writes(1,1).ref_time())]
 		pub fn upgrade(origin: OriginFor<T>, place_index: u8) -> DispatchResult {
-			let who: T::AccountId = ensure_signed(origin)?;
+			let who: AccountIdOf<T> = ensure_signed(origin)?;
 
 			// Ensures that the HexBoard exists
 			let mut hex_board = match HexBoardStorage::<T>::get(&who) {
@@ -446,7 +446,7 @@ pub mod pallet {
 		#[pallet::call_index(3)]
 		#[pallet::weight(10_000 + T::DbWeight::get().reads_writes(1,1).ref_time())]
 		pub fn finish_turn(origin: OriginFor<T>) -> DispatchResult {
-			let who: T::AccountId = ensure_signed(origin)?;
+			let who: AccountIdOf<T> = ensure_signed(origin)?;
 
 			// Ensures that the HexBoard exists
 			let mut hex_board = match HexBoardStorage::<T>::get(&who) {
@@ -503,7 +503,7 @@ pub mod pallet {
 		#[pallet::call_index(4)]
 		#[pallet::weight(10_000 + T::DbWeight::get().reads_writes(1,1).ref_time())]
 		pub fn force_finish_turn(origin: OriginFor<T>, game_id: GameId) -> DispatchResult {
-			let who: T::AccountId = ensure_signed(origin)?;
+			let who: AccountIdOf<T> = ensure_signed(origin)?;
 
 			let mut game = match GameStorage::<T>::get(game_id) {
 				Some(value) => value,
@@ -567,9 +567,9 @@ pub mod pallet {
 			Ok(())
 		}
 
-		#[pallet::call_index(7)]
+		/*#[pallet::call_index(7)]
 		#[pallet::weight(10_000 + T::DbWeight::get().reads_writes(1,1).ref_time())]
-		pub fn root_set_game(origin: OriginFor<T>, game_id: GameId, game: Game<T>) -> DispatchResult  {
+		pub fn root_set_game(origin: OriginFor<T>, game_id: GameId, game: GameOf<T>) -> DispatchResult  {
 			ensure_root(origin)?;
 
 			<GameStorage<T>>::set(&game_id, Some(game));
@@ -579,13 +579,13 @@ pub mod pallet {
 
 		#[pallet::call_index(8)]
 		#[pallet::weight(10_000 + T::DbWeight::get().reads_writes(1,1).ref_time())]
-		pub fn root_set_hex_board(origin: OriginFor<T>, player: AccountId<T>, hex_board: HexBoard<T>) -> DispatchResult  {
+		pub fn root_set_hex_board(origin: OriginFor<T>, player: AccountIdOf<T>, hex_board: HexBoardOf<T>) -> DispatchResult  {
 			ensure_root(origin)?;
 
 			<HexBoardStorage<T>>::set(&player, Some(hex_board));
 			
 			Ok(())
-		}
+		}*/
 	}
 }
 
@@ -1063,12 +1063,12 @@ impl<T: Config> Pallet<T> {
 	}
 
 	#[cfg(any(feature = "std", feature = "runtime-benchmarks", test))]
-	pub fn set_hex_board(player: AccountId<T>, hex_board: HexBoard<T>) {
+	pub fn set_hex_board(player: AccountIdOf<T>, hex_board: HexBoardOf<T>) {
 		<HexBoardStorage<T>>::set(&player, Some(hex_board));
 	}
 
 	#[cfg(any(feature = "std", feature = "runtime-benchmarks", test))]
-	pub fn set_game(game_id: GameId, game: Game<T>) {
+	pub fn set_game(game_id: GameId, game: GameOf<T>) {
 		<GameStorage<T>>::set(&game_id, Some(game));
 	}
 }
